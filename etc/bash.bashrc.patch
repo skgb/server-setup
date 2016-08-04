@@ -1,0 +1,14 @@
+--- /etc/bash.bashrc	2014-11-12 23:08:49.000000000 +0000
++++ /etc/bash.bashrc	2016-03-28 00:00:00.000000000 +0000
+@@ -18,3 +18,3 @@
+ # set a fancy prompt (non-color, overwrite the one in /etc/profile)
+-PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
++PS1='\h:\w ${debian_chroot:+($debian_chroot)}\u\$ '
+ 
+@@ -55 +55,5 @@
+ fi
++alias ls="ls --color=auto"
++alias update="sudo apt-get update && sudo apt-get --show-upgraded --show-progress dist-upgrade || (echo ; echo 'error')"
++alias upgrade=update
++
+ export PATH

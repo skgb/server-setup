@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#test -x /usr/sbin/logrotate || exit 0
+#/usr/sbin/logrotate /root/backuprotate.conf
+
+
+# rsync

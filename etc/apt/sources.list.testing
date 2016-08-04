@@ -1,0 +1,4 @@
+deb ftp://ftp.hosteurope.de/mirror/ftp.debian.org/debian testing main contrib non-free
+deb ftp://ftp.hosteurope.de/mirror/ftp.debian.org/debian testing-updates main contrib non-free
+deb http://ftp.de.debian.org/debian testing main contrib non-free
+deb http://ftp.de.debian.org/debian testing-updates main contrib non-free

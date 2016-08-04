@@ -1,0 +1,91 @@
+acl bogusnets {
+	// RFC1918 space is commonly used in spoofing attacks
+	0.0.0.0/8;
+	192.0.2.0/24;
+	224.0.0.0/3;
+	10.0.0.0/8;
+	172.16.0.0/12;
+	192.168.0.0/16;
+};
+acl ownnets {
+//	87.230.21.7;  // Tay
+	176.28.33.143;  // Kenmare
+	92.51.132.119;  // Cat
+	188.68.50.113;  // Clyde
+};
+acl buddynsquery {
+	108.61.224.67;
+	173.244.206.25;  // b.ns.buddyns.com
+	173.244.206.26;  // a.transfer.buddyns.com
+	88.198.106.11;  // b.transfer.buddyns.com
+	2001:19f0:6400:8642::3;  // b.ns.buddyns.com
+	2607:f0d0:1001:d::100;
+	2a01:4f8:d12:d01::10:100;  // b.transfer.buddyns.com
+};
+acl buddynstransfer {
+	173.244.206.26;  // a.transfer.buddyns.com
+	88.198.106.11;  // b.transfer.buddyns.com
+	2607:f0d0:1001:d::100;
+	2a01:4f8:d12:d01::10:100;  // b.transfer.buddyns.com
+};
+acl hosteuropetransfer {
+	217.115.143.129;  // a1.rpns.hosteurope.de
+	80.237.128.1;  // a1.rsns.hosteurope.de
+	217.115.143.130;  // b1.rpns.hosteurope.de
+	80.237.128.2;  // b1.rsns.hosteurope.de
+	217.115.143.131;  // c1.rpns.hosteurope.de
+	80.237.128.3;  // c1.rsns.hosteurope.de
+	217.115.143.140;  // ns1.hans.hosteurope.de
+	80.237.128.10;  // ns2.hans.hosteurope.de
+	80.237.128.144;  // master.cns.hosteurope.de
+	80.237.128.145;  // backup.cns.hosteurope.de
+};
+
+
+options {
+	directory "/var/cache/bind";
+
+	// If there is a firewall between you and nameservers you want
+	// to talk to, you may need to fix the firewall to allow multiple
+	// ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+	// If your ISP provided one or more IP addresses for stable 
+	// nameservers, you probably want to use them as forwarders.  
+	// Uncomment the following block, and insert the addresses replacing 
+	// the all-0's placeholder.
+
+	// forwarders {
+	// 	0.0.0.0;
+	// };
+	// use local cache in our ISP's master NS
+//	forwarders {
+//		80.237.128.144;  // master.cns.hosteurope.de
+//		80.237.128.145;  // backup.cns.hosteurope.de
+//		46.38.225.230;  // dns-resolv1.netcup.net
+//		46.38.252.230;  // dns2.dnsserver2.de
+//	};
+
+	// support for secondary NS
+	allow-transfer {
+		# IPs der Secondary-NS, ggf. weitere hinzufuegen.
+		localhost;
+		hosteuropetransfer;
+		buddynstransfer;
+	};
+
+	// some security/anti-abuse provisions
+	blackhole { bogusnets; };
+	allow-query { localhost; ownnets; buddynsquery; };
+	allow-recursion { localhost; ownnets; };
+
+
+	//========================================================================
+	// If BIND logs error messages about the root key being expired,
+	// you will need to update your keys.  See https://www.isc.org/bind-keys
+	//========================================================================
+	dnssec-validation auto;
+
+	auth-nxdomain no;    # conform to RFC1035
+	listen-on-v6 { any; };
+};
+

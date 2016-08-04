@@ -1,0 +1,6 @@
+*.private
+*.private.*
+
+clydesetup.tar
+
+setup.log.txt

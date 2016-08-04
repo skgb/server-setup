@@ -1,0 +1,8 @@
+--- /Users/aj/Desktop/neo4j.properties	2016-03-22 17:02:00.000000000 +0000
++++ /Users/aj/Desktop/neo4j.properties	2016-04-04 00:00:00.000000000 +0000
+@@ -27,4 +27,5 @@
+ # `data/import/movies/actors.csv`.
+ #dbms.security.load_csv_file_url_root=data/import
++allow_file_urls=false
+ 
+ # Keep logical logs, helps debugging but uses more disk space, enabled for

@@ -1,0 +1,18 @@
+# virtual alias table for host Clyde
+
+
+#######################################################################
+## SKGB
+
+
+# This is a default/fallback config, to be overwritten with a backup.
+
+info@skgb.de root
+
+webmaster@skgb.de root
+postmaster@skgb.de root
+hostmaster@skgb.de root
+
+
+#######################################################################
+## EOF

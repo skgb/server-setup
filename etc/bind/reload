@@ -1,0 +1,6 @@
+#! /bin/bash
+
+named-checkconf && /etc/init.d/bind9 reload || echo "*** ERRROR ***"
+
+# alternative (used on Tay):
+#rndc reload
