@@ -73,8 +73,8 @@ Setup des Servers
 	(siehe auch `prep.sh`):
 	```bash
 	curl -LO https://github.com/skgb/server-setup/archive/master.zip
-	unzip master.zip
-	mv server-setup-master /root/clydesetup
+	unzip -d /root master.zip
+	mv /root/server-setup-master /root/clydesetup
 	rm master.zip
 	
 	```
