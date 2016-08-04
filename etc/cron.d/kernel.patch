@@ -1,0 +1,6 @@
+--- /etc/cron.d/kernel~	2016-08-04 22:33:03.140000000 +0200
++++ /etc/cron.d/kernel	2016-08-04 22:32:37.016000000 +0200
+@@ -1,2 +1,2 @@
+ 3 * * * * root sync; echo 1 > /proc/sys/vm/drop_caches
+-16 21 * * * root fstrim /
++16 21 * * * root /sbin/fstrim /
