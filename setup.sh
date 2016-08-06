@@ -205,7 +205,20 @@ apt-get -y -t jessie-backports install certbot python-certbot-apache
 
 # MySQL
 mysqladmin flush-privileges
-mysql --user=root <<EOF
+mysql mysql --user=root <<EOF
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+SET PASSWORD FOR 'root'@'::1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+DELETE FROM user WHERE user = 'root' AND password = '';
+FLUSH PRIVILEGES;
+EOF
+#CREATE USER 'root'@'clyde.skgb.de' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
+#GRANT ALL PRIVILEGES ON *.* TO 'root'@'clyde.skgb.de';
+
+setup_copy /root/.my.cnf 600
+sed -e "/^password = .*/s//password = \"$MYSQL_ROOT_PASSWORD\"/" -i /root/.my.cnf
+
+mysql <<EOF
 CREATE USER 'backup'@'localhost' IDENTIFIED BY '$MYSQL_BACKUP_PASSWORD';
 GRANT SELECT, SHOW DATABASES, LOCK TABLES, EVENT ON *.* TO 'backup'@'localhost';
 CREATE USER 'skgb-intern'@'%' IDENTIFIED BY '$MYSQL_INTERN_PASSWORD';
@@ -268,15 +281,8 @@ setup_copy /etc/cron.hourly/backup X
 # the backup import will overwrite the password, in which case logrotate may start to send daily email complaints to root
 # (because of "error: 'Access denied for user 'debian-sys-maint'@'localhost' (using password: YES)'", which isn't given in the email though)
 # solution: read new password from /etc/mysql/debian.cnf and set that as the new password for debian-sys-maint in mysql, overwriting the imported backup
-echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql -u root ) || echo ' password unchanged (error!)' && SETUPFAIL=2
-#echo "FLUSH PRIVILEGES;" | mysql -u root
+echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql ) || echo ' password unchanged (error!)' && SETUPFAIL=2
 mysqladmin flush-privileges
-
-# TODO: Now that we're done manipulating MySQL, should we secure the database by defining a MySQL root password? Makes things less convenient for sure -- but does it really provide a substantial increase in security?
-#mysqladmin --user=root --host=localhost password "new_password"
-#mysqladmin --user=root --host=clyde.skgb.de password "new_password"
-#mysqladmin --user=root --host=127.0.0.1 password "new_password"
-#mysqladmin --user=root --host=::1 password "new_password"
 
 
 
