@@ -81,7 +81,7 @@ rm -f neo4jfulldump.cypher.bz2 postfix-virtual databases.tar databases.tar.gpg
 
 # include non-transient data like apache document roots? -> NO!, these are pulled from outside sources like repositories by the setup routines (should be, anyway - TODO)
 cd /srv
-tar -cf "$BACKUPDIR/$BACKUPSRVFILE" --exclude=Data *
+tar -cf "$BACKUPDIR/$BACKUPSRVFILE" --exclude=Data --warning=no-file-changed *
 cd "$BACKUPDIR"
 # ./.
 # how about stuff that may be sloppily changed on Clyde only, but not in the rep? 
