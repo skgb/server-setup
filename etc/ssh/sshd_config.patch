@@ -1,0 +1,9 @@
+--- /etc/ssh/sshd_config	2016-08-04 08:00:00.000000000 +0200
++++ /etc/ssh/sshd_config	2016-09-02 11:52:00.000000000 +0200
+@@ -26,5 +26,5 @@
+ # Authentication:
+ LoginGraceTime 120
+-PermitRootLogin yes
++PermitRootLogin without-password
+ StrictModes yes
+ 

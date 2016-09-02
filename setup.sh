@@ -148,6 +148,8 @@ setup_user_forward () {
 
 . "$SETUPPATH/setup.private"
 
+setup_patch /etc/ssh/sshd_config
+
 
 
 ### user prefs
