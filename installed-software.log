@@ -17,7 +17,9 @@ gnupg2						install
 grep						install
 gzip						install
 hostname					install
+joe							install
 less						install
+lshw						install
 make						install
 mysql-client				install
 mysql-server				install

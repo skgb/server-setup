@@ -1,4 +1,6 @@
-- startup script skgb-intern: funktioniert nicht, weil neo4j nicht sofort startet
+- startup script skgb-intern: funktioniert nicht zuverlässig, weil neo4j nicht sofort startet
+
+- ssl-zertifikat mit ins backup, um expiration-Warnungen zu vermeiden.
 
 - offsite backups
 

@@ -286,6 +286,9 @@ setup_copy /etc/cron.hourly/backup X
 echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql ) || echo ' password unchanged (error!)' && SETUPFAIL=2
 mysqladmin flush-privileges
 
+# the backup import will overwrite the MTA's virtual alias table
+/etc/postfix/reload
+
 
 
 ### SSL
