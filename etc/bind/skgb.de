@@ -5,77 +5,52 @@
 $ORIGIN skgb.de.
 
 ; default expiration time for RRs without their own TTL value
-$TTL 5m
+$TTL 4h
 
-@	30m	IN	SOA	clyde.skgb.de. hostmaster.skgb.de. (
-				2016080303	; serial number for this zone
-				4h		; slave refresh
+@	2h	IN	SOA	clyde.skgb.de. hostmaster.skgb.de. (
+				2016091101	; serial number for this zone
+				2h		; slave refresh
 				30m		; slave retry
 				2w		; slave expire
 				20m )		; minimum TTL for failed lookups
 
 @		NS	clyde.skgb.de.
-		NS	ns.inwx.de.
-		NS	c.ns.buddyns.com.
+@	1h	NS	ns.inwx.de.
+@	1h	NS	c.ns.buddyns.com.
 
+clyde	1d	A	188.68.50.113
+@	30m	MX	10 cat.johannessen.de.
 
-
-; "Host Europe: MX-Records"
-
-mail		A	92.51.132.119
-@		MX	10 mail
-
-;mx0.kenmare.skgb.de.		A	80.237.138.5
-;kenmare.skgb.de.		MX	10 mx0.kenmare
-
-
-
-; "Host Europe: AutoDNS"
-
+; SKGB-Web
+www		A	188.68.50.113
+www1		CNAME	www
+www2		CNAME	www
 @		A	188.68.50.113
-@		TXT	"google-site-verification=N6OI3YAlMIm9gBslRstUmrYVjtdvITLYZdcMacqrwUM"
-a		A	188.68.50.113
-clyde		A	188.68.50.113
-imap		CNAME	vwp8467.webpack.hosteurope.de.
-intern		A	188.68.50.113
+		TXT	"google-site-verification=N6OI3YAlMIm9gBslRstUmrYVjtdvITLYZdcMacqrwUM"
+
+; SKGB-Web Archiv
+archiv		A	188.68.50.113
+a		CNAME	archiv
+
+; SKGB-intern
+intern	5m	A	188.68.50.113
 intern1		A	92.51.132.119
 intern2		A	188.68.50.113
-ip6		AAAA	2a03:4000:6:d111::1
-servo		A	188.68.50.113
-www		A	188.68.50.113
-
-
-
-; "Host Europe: Webhosting-Subdomains"
-
-archiv		A	188.68.50.113
-d		A	176.28.33.143
-dev		A	176.28.33.143
-i		A	188.68.50.113
+i		CNAME	intern
 kp8565c79hif.intern		A	188.68.50.113
-www1		A	176.28.33.143
-www2		A	188.68.50.113
 
+; misc
+servo		A	188.68.50.113
+ip6		AAAA	2a03:4000:6:d111::1
+;server-g4	CNAME	tokotah.homeip.net.
+@		LOC	51 4 28 N 7 33 43 E 417m 500m 500m 3m
 
-
-; old / unused (from Tay)
-
-;test		CNAME	www
-;www2		CNAME	www
-
+; Host Europe VSM
+mail		A	92.51.132.119
+;imap		CNAME	vwp8467.webpack.hosteurope.de.
+d		CNAME	dev
+dev		A	176.28.33.143
 ;vsm.he		CNAME	wp10959533.vwp8467.webpack.hosteurope.de.
 ;he		CNAME	vwp8467.webpack.hosteurope.de.
-;www1		CNAME	he
-;server-g4	CNAME	tokotah.homeip.net.
 
-;END-OF-ZONE-MARKER-DUMMY-RECORD TXT fini
-
-; TTL Rationale:
-; $TTL 24h -- long because this zone usually is pretty stable (netcup: 2h)
-; @ 6h IN SOA -- stable zone, but SOA not too long to facilitate changes; plus it's mostly only used by the secondary NS anyway; HOWEVER: HE uses slave retry time here, which seems very short (netcup: 2h)
-; 6h ; slave refresh -- slightly long-ish: stable zone; also, same as SOA (netcup: 8h)
-; 2h ; slave retry
-; 6w ; slave expire -- very long to ease pressure in case I really screw up the server (netcup: 2w)
-; 30m ; minimum TTL for failed lookups -- perhaps very short for this stable zone, but I tend to forget not to try and resolve experimental additions before adding them to the DNS (netcup: 2h)
-; @ 2d NS -- long because of stable zone; NB: bind on Cat seems to implement a maximum of 2d (HE: 3d)
-; Most important A / MX records: same as NS.
+zone-complete		TXT yes

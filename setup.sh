@@ -392,15 +392,8 @@ apachectl start
 echo "Obtaining SSL certificate from Let's Encrypt..."
 #letsencrypt certonly --test-cert --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domains intern.skgb.de,intern2.skgb.de,clyde.skgb.de
 
-#certbot certonly --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domain skgb.de \
-#	--domain archiv.skgb.de \
-#	--domain clyde.skgb.de \
-#	--domain intern.skgb.de \
-#	--domain intern2.skgb.de \
-#	--domain servo.skgb.de \
-#	--domain www.skgb.de
-
 if certbot certonly --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domain skgb.de \
+	--domain archiv.skgb.de \
 	--domain clyde.skgb.de \
 	--domain intern.skgb.de \
 	--domain intern2.skgb.de \
