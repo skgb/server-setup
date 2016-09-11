@@ -14,9 +14,8 @@ $TTL 5m
 				2w		; slave expire
 				20m )		; minimum TTL for failed lookups
 
-;		NS	ns1.hans.hosteurope.de.
-;		NS	ns2.hans.hosteurope.de.
 @		NS	clyde.skgb.de.
+		NS	ns.inwx.de.
 		NS	c.ns.buddyns.com.
 
 

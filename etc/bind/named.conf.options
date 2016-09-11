@@ -8,8 +8,6 @@ acl bogusnets {
 	192.168.0.0/16;
 };
 acl ownnets {
-//	87.230.21.7;  // Tay
-	176.28.33.143;  // Kenmare
 	92.51.132.119;  // Cat
 	188.68.50.113;  // Clyde
 };
@@ -28,17 +26,17 @@ acl buddynstransfer {
 	2607:f0d0:1001:d::100;
 	2a01:4f8:d12:d01::10:100;  // b.transfer.buddyns.com
 };
-acl hosteuropetransfer {
-	217.115.143.129;  // a1.rpns.hosteurope.de
-	80.237.128.1;  // a1.rsns.hosteurope.de
-	217.115.143.130;  // b1.rpns.hosteurope.de
-	80.237.128.2;  // b1.rsns.hosteurope.de
-	217.115.143.131;  // c1.rpns.hosteurope.de
-	80.237.128.3;  // c1.rsns.hosteurope.de
-	217.115.143.140;  // ns1.hans.hosteurope.de
-	80.237.128.10;  // ns2.hans.hosteurope.de
-	80.237.128.144;  // master.cns.hosteurope.de
-	80.237.128.145;  // backup.cns.hosteurope.de
+acl inwx {
+	217.70.142.96;  // zoidberg.inwx.net
+	217.70.142.66;  // ns.inwx.de
+	213.239.206.103;  // ns2.inwx.de
+	46.165.212.97;  // ns3.inwx.eu
+	95.211.1.145;  // ns4.inwx.com
+	108.59.8.65;  // ns5.inwx.net
+	2a01:4f8:130:90e1::2;  // ns2.inwx.de
+	2a00:c98:2100:a006:3::1;  // ns3.inwx.eu
+	2001:1af8:4400:a048:1::1;  // ns4.inwx.com
+	2604:9a00:2010:a013:1::1;  // ns5.inwx.net
 };
 
 
@@ -59,8 +57,6 @@ options {
 	// };
 	// use local cache in our ISP's master NS
 //	forwarders {
-//		80.237.128.144;  // master.cns.hosteurope.de
-//		80.237.128.145;  // backup.cns.hosteurope.de
 //		46.38.225.230;  // dns-resolv1.netcup.net
 //		46.38.252.230;  // dns2.dnsserver2.de
 //	};
@@ -69,13 +65,14 @@ options {
 	allow-transfer {
 		# IPs der Secondary-NS, ggf. weitere hinzufuegen.
 		localhost;
-		hosteuropetransfer;
+		inwx;
 		buddynstransfer;
 	};
 
 	// some security/anti-abuse provisions
 	blackhole { bogusnets; };
-	allow-query { localhost; ownnets; buddynsquery; };
+//	allow-query { localhost; ownnets; inwx; buddynsquery; };
+	allow-query { any; } ;
 	allow-recursion { localhost; ownnets; };
 
 

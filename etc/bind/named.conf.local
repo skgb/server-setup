@@ -11,6 +11,7 @@ include "/etc/bind/zones.rfc1918";
 zone "skgb.de" {
 	type master;
 	notify yes;
+	also-notify { 217.70.142.96; };
 	allow-query { any; };
 	file "/etc/bind/skgb.de";
 };
