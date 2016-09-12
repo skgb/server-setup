@@ -363,7 +363,7 @@ a2ensite archiv
 setup_copy "$APACHE_DIR/sites-available/intern.conf" R
 a2ensite intern
 setup_copy "$APACHE_DIR/sites-available/intern1.conf" R
-#a2ensite intern1  # untested!
+a2ensite intern1
 setup_copy "$APACHE_DIR/sites-available/servo.conf" R
 a2ensite servo
 setup_copy "$APACHE_DIR/sites-available/skgb.conf" R
