@@ -35,12 +35,23 @@ Setup des Servers
 
 1.	Wartung dem Vorstand ankündigen. Soweit möglich, `setup.sh` prüfen
 	und aktualisieren.
+
+1.	Lokalen Export dieses Repositories anlegen:
+	```bash
+	git clone ssh://git@clyde.skgb.de/srv/git/clyde-setup.git clydesetup
+	clydesetup/prep.sh
 	
+	```
+	
+	Falls der Server nicht online ist, muss auf ein Backup zurückgegriffen
+	werden. Es ist empfehlenswert, eine lokale Arbeitskopie des Repositories
+	immer aktuell zu haben (also regelmäßig zu `pull`en).
+
 1.	Sicherstellen, dass ein aktuelles Offsite-Backup vorhanden ist und
 	beim Setup *schnell* zur Verfügung steht (eine lokale Kopie, die
 	über einen lahmen Telekom-ADSL-Upstream hochgeladen werden soll,
-	ist keine Lösung). Benötigt wird zusätzlich zu diesem Repository
-	folgendes:
+	ist keine Lösung). Benötigt wird folgendes:
+	- `clydesetup.tar` – Export dieses Repositories
 	- `setup.private` – Passwörter für Serverdienste etc.
 	  (`/root/clydesetup/setup.private`)
 	- `backupkey.private` – privater PGP-Schlüssel für `clydebackup.tar`
@@ -69,13 +80,11 @@ Setup des Servers
 	
 	```
 
-1.	Export dieses Repositories in `/root/clydesetup` anlegen
-	(siehe auch `prep.sh`):
+1.	Export dieses Repositories in `/root/clydesetup` anlegen:
 	```bash
-	curl -LO https://github.com/skgb/server-setup/archive/master.zip
-	unzip -d /root master.zip
-	mv /root/server-setup-master /root/clydesetup
-	rm master.zip
+	cd /root
+	tar -xf clydesetup.tar --no-same-owner --no-same-permissions
+	rm clydesetup.tar
 	
 	```
 	

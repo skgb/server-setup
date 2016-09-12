@@ -102,11 +102,31 @@ setup_patch () {
 
 
 
-### SSH
+### user prefs
 ## Clyde
-# setup user accounts
 
 setup_copy /etc/skel/.bashrc X
+
+setup_patch /etc/bash.bashrc
+setup_patch /root/.bashrc
+
+
+
+### SSH
+## Clyde
+
+# prepare shared Git repo
+
+adduser --disabled-password --uid 201 --gecos "Git shared access" git
+mkdir -p /home/git/.ssh /srv/git
+touch /home/git/.ssh/authorized_keys
+chmod 700 /home/git/.ssh
+chmod 644 /home/git/.ssh/authorized_keys
+chown -R git:git /home/git/.ssh /srv/git
+#sudo -u git ln -s /srv/git /home/git/srv
+
+
+# setup user accounts
 
 setup_copy /etc/sudoers.d/wheel 0440
 addgroup --gid 500 wheel
@@ -149,14 +169,6 @@ setup_user_forward () {
 . "$SETUPPATH/setup.private"
 
 setup_patch /etc/ssh/sshd_config
-
-
-
-### user prefs
-## Clyde
-
-setup_patch /etc/bash.bashrc
-setup_patch /root/.bashrc
 
 
 
