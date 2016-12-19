@@ -510,7 +510,7 @@ cpan Devel::StackTrace Text::Trim String::Random HTML::Entities DBI DBD::mysql |
 cpan Mojolicious DateTime DateTime::Format::ISO8601 Time::Date Mojo::SMTP::Client Email::MessageID || SETUPFAIL=24
 cpan String::Util List::MoreUtils Util::Any Digest::MD5 Mojolicious::Plugin::Authorization || SETUPFAIL=25
 cpan Perl::Version SemVer Text::WordDiff || SETUPFAIL=26
-cpan REST::Client Cpanel::JSON::XS JSON::MaybeXS || SETUPFAIL=27
+cpan REST::Client Cpanel::JSON::XS JSON::MaybeXS Regexp::Common || SETUPFAIL=27
 
 # Neo4j
 cpan -fi LWP::Protocol::https REST::Neo4p || SETUPFAIL=28

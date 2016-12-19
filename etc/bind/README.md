@@ -3,6 +3,8 @@ Hinweise zum DNS
 
 - <https://www.denic.de/fileadmin/public/documentation/DENIC-23p.pdf>
 
+- <https://www.denic.de/service/tools/nast/>
+
 - Bei einigen ISPs müssen <a href=http://de.wikipedia.org/wiki/NS_Resource_Record#Zonendelegation>Glue-Records</a> manuell eingerichtet werden (da diese ja nicht im Zone File definiert werden), andere ISPs machen das automatisch im Zusammenhang mit der Festlegung des externen Nameservers.
 
 
