@@ -6,6 +6,8 @@
 
 - firewall (u. a. port 3000 sperren)
 
+- BIND zumachen, ausschließlich INWX nutzen (ist flexibel genug und sicherer)
+
 - fail2ban
 
 - monitoring

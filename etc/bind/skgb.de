@@ -8,15 +8,15 @@ $ORIGIN skgb.de.
 $TTL 4h
 
 @	2h	IN	SOA	clyde.skgb.de. hostmaster.skgb.de. (
-				2016091101	; serial number for this zone
+				2017050901	; serial number for this zone
 				2h		; slave refresh
 				30m		; slave retry
 				2w		; slave expire
 				20m )		; minimum TTL for failed lookups
 
-@		NS	clyde.skgb.de.
-@	1h	NS	ns.inwx.de.
-@	1h	NS	c.ns.buddyns.com.
+@	2h	NS	clyde.skgb.de.
+	2h	NS	ns.inwx.de.
+	2h	NS	c.ns.buddyns.com.
 
 clyde	1d	A	188.68.50.113
 @	30m	MX	10 cat.johannessen.de.
@@ -44,6 +44,7 @@ servo		A	188.68.50.113
 ip6		AAAA	2a03:4000:6:d111::1
 ;server-g4	CNAME	tokotah.homeip.net.
 @		LOC	51 4 28 N 7 33 43 E 417m 500m 500m 3m
+cloud		A	188.68.50.113
 
 ; Host Europe VSM
 mail		A	92.51.132.119
