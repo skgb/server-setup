@@ -4,7 +4,6 @@ apache2						install
 apt							install
 aptitude					install
 bash						install
-bind9						install
 bzip2						install
 cron						install
 curl						install
