@@ -203,6 +203,9 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get -y install $(cat installed-software.log | awk '{print $1}') || exit
 export DEBIAN_FRONTEND=
 
+# see https://www.bsi.bund.de/DE/Themen/Cyber-Sicherheit/Aktivitaeten/CERT-Bund/CERT-Reports/HOWTOs/Offene-Portmapper-Dienste/Offene-Portmapper-Dienste_node.html
+apt-get remove rpcbind
+
 # install Let's Encrypt for SSL
 # (unavailable in Debian 8 => backports)
 setup_copy /etc/apt/sources.list.d/letsencrypt.list R
