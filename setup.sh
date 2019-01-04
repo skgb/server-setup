@@ -21,13 +21,13 @@ pwd | grep -q "^$SETUPPATH$" || exit 1
 # this is important because if we don't the script may fail and leave the system in an inconsistent state, creating a need to reinstall a fresh system all over again
 if [[ ! -e "$SETUPPATH/setup.private" || ! -e "$SETUPPATH/backupkey.private" || ! -e "$SETUPPATH/clydebackup.tar" || ! -e "$SETUPPATH/clydesrv.tar.gz" ]]
 then
-	echo "Need:"
-	echo "  setup.private"
-	echo "  backupkey.private"
-	echo "  clydebackup.tar"
-	echo "  clydesrv.tar.gz"
-	echo "Missing. Ends."
-	exit 1
+  echo "Need:"
+  echo "  setup.private"
+  echo "  backupkey.private"
+  echo "  clydebackup.tar"
+  echo "  clydesrv.tar.gz"
+  echo "Missing. Ends."
+  exit 1
 fi
 
 # init
@@ -39,64 +39,64 @@ update-locale LANG=C.UTF-8
 
 
 setup_repo_permissions () {
-	# usage: setup_repo_permissions /path/to/repo/etc/configfile R
-	# Confirms that the specified file exists and sets its permissions.
-	
-	[ $# -ge 1 ] || return 9  # file path (required argument)
-	PATH_REP="$1"
-	[ -e "$PATH_REP" ] || return 3
-	
-	if [ $# -ge 2 ]  # permissions
-	then
-		if [ "$2" = "X" ]
-		then
-			chmod -v 755 "$PATH_REP"
-		elif [ "$2" = "R" ]
-		then
-			chmod -v 644 "$PATH_REP"
-		else
-			chmod -v "$2" "$PATH_REP"
-		fi
-	fi
+  # usage: setup_repo_permissions /path/to/repo/etc/configfile R
+  # Confirms that the specified file exists and sets its permissions.
+  
+  [ $# -ge 1 ] || return 9  # file path (required argument)
+  PATH_REP="$1"
+  [ -e "$PATH_REP" ] || return 3
+  
+  if [ $# -ge 2 ]  # permissions
+  then
+    if [ "$2" = "X" ]
+    then
+      chmod -v 755 "$PATH_REP"
+    elif [ "$2" = "R" ]
+    then
+      chmod -v 644 "$PATH_REP"
+    else
+      chmod -v "$2" "$PATH_REP"
+    fi
+  fi
 }
 
 
 
 setup_copy () {
-	# usage: setup_copy /etc/configfile R
-	# Creates the config file at the specified location by copying from
-	# the repository.
-	
-	[ $# -ge 1 ] || ( echo "setup_copy error 9: file path (required argument)" && exit 9 )
-	PATH_SYS="$1"
-	PATH_REP="$SETUPPATH$1"
-	
-	setup_repo_permissions "$PATH_REP" $2  # 2nd arg is optional
-	[ $? -ne 0 ] && echo "setup_copy error 3: '$1' '$2'" && exit 3
-	
-	[ -e "$PATH_SYS" ] && mv -v "$PATH_SYS" "$PATH_REP.orig"
-	echo "copying $PATH_SYS"
-	mkdir -p `dirname $PATH_SYS`
-	cp "$PATH_REP" "$PATH_SYS"
+  # usage: setup_copy /etc/configfile R
+  # Creates the config file at the specified location by copying from
+  # the repository.
+  
+  [ $# -ge 1 ] || ( echo "setup_copy error 9: file path (required argument)" && exit 9 )
+  PATH_SYS="$1"
+  PATH_REP="$SETUPPATH$1"
+  
+  setup_repo_permissions "$PATH_REP" $2  # 2nd arg is optional
+  [ $? -ne 0 ] && echo "setup_copy error 3: '$1' '$2'" && exit 3
+  
+  [ -e "$PATH_SYS" ] && mv -v "$PATH_SYS" "$PATH_REP.orig"
+  echo "copying $PATH_SYS"
+  mkdir -p `dirname $PATH_SYS`
+  cp "$PATH_REP" "$PATH_SYS"
 }
 
 
 
 setup_patch () {
-	# usage: setup_patch /etc/configfile
-	# Creates the config file at the specified location by patching the
-	# existing file at that location with a patch from the repository.
-	
-	# create patch:
-	# diff -U2
-	
-	[ $# -ge 1 ] || ( echo "setup_copy error 9: file path (required argument)" && exit 9 )
-	PATH_SYS="$1"
-	PATH_REP="$SETUPPATH$1"
-	[ -e "$PATH_REP.patch" ] && [ -e "$PATH_SYS" ] || ( echo "setup_copy error 3: '$1'" && exit 3 )
-	
-	patch -b -V simple -z .orig "$PATH_SYS" < "$PATH_REP.patch"
-	[ -e "$PATH_SYS.orig" ] && mv -v "$PATH_SYS.orig" "$PATH_REP.orig"
+  # usage: setup_patch /etc/configfile
+  # Creates the config file at the specified location by patching the
+  # existing file at that location with a patch from the repository.
+  
+  # create patch:
+  # diff -U2
+  
+  [ $# -ge 1 ] || ( echo "setup_copy error 9: file path (required argument)" && exit 9 )
+  PATH_SYS="$1"
+  PATH_REP="$SETUPPATH$1"
+  [ -e "$PATH_REP.patch" ] && [ -e "$PATH_SYS" ] || ( echo "setup_copy error 3: '$1'" && exit 3 )
+  
+  patch -b -V simple -z .orig "$PATH_SYS" < "$PATH_REP.patch"
+  [ -e "$PATH_SYS.orig" ] && mv -v "$PATH_SYS.orig" "$PATH_REP.orig"
 }
 
 
@@ -133,37 +133,37 @@ addgroup --gid 500 wheel
 addgroup --gid 501 skgb-web  # group skgb-web is probably no longer required
 
 setup_super_user () {
-	# usage: setup_super_user "loginname" "Real Name"
-	# Adds the specified user to the system with full sudo privileges.
-	
-	echo "setup_super_user $1 '$2'"
-	adduser --disabled-password --gecos "$2" "$1"
-	adduser "$1" wheel  # sudoer
-	adduser "$1" adm  # read log files
-	adduser "$1" skgb-web
-	mkdir -p "/home/$1/.ssh"
-	touch "/home/$1/.ssh/authorized_keys"
-	chmod 700 "/home/$1/.ssh"
-	chmod 644 "/home/$1/.ssh/authorized_keys"
-	chown -R "$1:$1" "/home/$1/.ssh"
+  # usage: setup_super_user "loginname" "Real Name"
+  # Adds the specified user to the system with full sudo privileges.
+  
+  echo "setup_super_user $1 '$2'"
+  adduser --disabled-password --gecos "$2" "$1"
+  adduser "$1" wheel  # sudoer
+  adduser "$1" adm  # read log files
+  adduser "$1" skgb-web
+  mkdir -p "/home/$1/.ssh"
+  touch "/home/$1/.ssh/authorized_keys"
+  chmod 700 "/home/$1/.ssh"
+  chmod 644 "/home/$1/.ssh/authorized_keys"
+  chown -R "$1:$1" "/home/$1/.ssh"
 }
 
 setup_insecure_password () {
-	# usage: PASSWORD=`setup_insecure_password`
-	# Returns a fresh pseudo-random password. While this password is not
-	# cryptographically secure, it might still be good enough for certain
-	# low-security applications.
-	
-	perl -e '$l=$ARGV[0]||16; @c=(("A".."Z"),("a".."z"),(0..9)); $n=$#c+1; for(1..$l){$p.=$c[int(rand($n))];} print $p;' $1
+  # usage: PASSWORD=`setup_insecure_password`
+  # Returns a fresh pseudo-random password. While this password is not
+  # cryptographically secure, it might still be good enough for certain
+  # low-security applications.
+  
+  perl -e '$l=$ARGV[0]||16; @c=(("A".."Z"),("a".."z"),(0..9)); $n=$#c+1; for(1..$l){$p.=$c[int(rand($n))];} print $p;' $1
 }
 
 setup_user_forward () {
-	# usage: setup_user_forward "loginname" "mailbox@host.example"
-	# Installs a .forward file in the user's home dir.
-	
-	echo "$2" > "/home/$1/.forward"
-	chown "$1":"$1" "/home/$1/.forward"
-	chmod 644 "/home/$1/.forward"
+  # usage: setup_user_forward "loginname" "mailbox@host.example"
+  # Installs a .forward file in the user's home dir.
+  
+  echo "$2" > "/home/$1/.forward"
+  chown "$1":"$1" "/home/$1/.forward"
+  chmod 644 "/home/$1/.forward"
 }
 
 . "$SETUPPATH/setup.private"
@@ -322,7 +322,7 @@ APACHE_DIR=/etc/apache2
 
 for user in `awk -F':' '/^skgb-web/{print $4}' /etc/group | sed -e 's/,/ /g'`
 do
-	addgroup "$user" www-data
+  addgroup "$user" www-data
 done
 
 mkdir -p /srv/Log/
@@ -411,22 +411,22 @@ echo "Obtaining SSL certificate from Let's Encrypt..."
 #letsencrypt certonly --test-cert --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domains intern.skgb.de,intern2.skgb.de,clyde.skgb.de
 
 if certbot certonly --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domain skgb.de \
-	--domain archiv.skgb.de \
-	--domain clyde.skgb.de \
-	--domain intern.skgb.de \
-	--domain intern2.skgb.de \
-	--domain servo.skgb.de \
-	--domain www.skgb.de
+  --domain archiv.skgb.de \
+  --domain clyde.skgb.de \
+  --domain intern.skgb.de \
+  --domain intern2.skgb.de \
+  --domain servo.skgb.de \
+  --domain www.skgb.de
 then
-	echo "Let's Encrypt was successful; switching out certificate links ..."
-	rm -f /etc/ssl/skgb/fullchain.pem /etc/ssl/skgb/privkey.pem
-	ln -vs /etc/letsencrypt/live/skgb.de/fullchain.pem /etc/ssl/skgb/fullchain.pem
-	ln -vs /etc/letsencrypt/live/skgb.de/privkey.pem /etc/ssl/skgb/privkey.pem
-	apachectl graceful
+  echo "Let's Encrypt was successful; switching out certificate links ..."
+  rm -f /etc/ssl/skgb/fullchain.pem /etc/ssl/skgb/privkey.pem
+  ln -vs /etc/letsencrypt/live/skgb.de/fullchain.pem /etc/ssl/skgb/fullchain.pem
+  ln -vs /etc/letsencrypt/live/skgb.de/privkey.pem /etc/ssl/skgb/privkey.pem
+  apachectl graceful
 else
-	echo "Error with Let's Encrypt."
-	echo "*** Using self-signed certificate! ***"
-	SETUPFAIL=3
+  echo "Error with Let's Encrypt."
+  echo "*** Using self-signed certificate! ***"
+  SETUPFAIL=3
 fi
 
 setup_copy /etc/cron.daily/letsencrypt-skgb X
@@ -457,11 +457,11 @@ setup_copy /etc/network/interfaces.d/ip6 R
 # report errors now instead of at the script's end because Perl install overwrites the SETUPFAIL variable
 # TODO: better error handling
 if [ "$SETUPFAIL" -ne 0 ] ; then
-	echo 1>&2
-	echo "*** ERRORS HAVE OCCURRED ***" 1>&2
-	echo "(error code: $SETUPFAIL)" 1>&2
-	echo 1>&2
-	# NB: absence of this message does not signify the absence of errors
+  echo 1>&2
+  echo "*** ERRORS HAVE OCCURRED ***" 1>&2
+  echo "(error code: $SETUPFAIL)" 1>&2
+  echo 1>&2
+  # NB: absence of this message does not signify the absence of errors
 fi
 
 
@@ -527,9 +527,9 @@ cpan -fi LWP::Protocol::https REST::Neo4p || SETUPFAIL=28
 echo
 echo "Perl install: All done!"
 if [ "$SETUPFAIL" -gt 20 ] ; then
-	echo "(errors seem to have occurred; code $SETUPFAIL)"
-	# note that only the last error code will be reported here
-	# TODO: better error handling
+  echo "(errors seem to have occurred; code $SETUPFAIL)"
+  # note that only the last error code will be reported here
+  # TODO: better error handling
 fi
 echo
 
