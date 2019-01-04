@@ -538,6 +538,7 @@ echo
 # Enable LOMS
 update-rc.d skgb-intern.sh defaults
 #/etc/init.d/skgb-intern.sh start
+setup_copy /etc/cron.d/skgb-intern R
 
 # shutdown -r now
 
