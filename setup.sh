@@ -19,10 +19,10 @@ pwd | grep -q "^$SETUPPATH$" || exit 1
 
 # make sure we have everything we need *before* starting the setup process
 # this is important because if we don't the script may fail and leave the system in an inconsistent state, creating a need to reinstall a fresh system all over again
-if [[ ! -e "$SETUPPATH/setup.private" || ! -e "$SETUPPATH/backupkey.private" || ! -e "$SETUPPATH/clydebackup.tar" || ! -e "$SETUPPATH/clydesrv.tar.gz" ]]
+if [[ ! -e "$SETUPPATH/credentials.private" || ! -e "$SETUPPATH/backupkey.private" || ! -e "$SETUPPATH/clydebackup.tar" || ! -e "$SETUPPATH/clydesrv.tar.gz" ]]
 then
   echo "Need:"
-  echo "  setup.private"
+  echo "  credentials.private"
   echo "  backupkey.private"
   echo "  clydebackup.tar"
   echo "  clydesrv.tar.gz"
@@ -167,7 +167,7 @@ setup_user_forward () {
   chmod 644 "/home/$1/.forward"
 }
 
-. "$SETUPPATH/setup.private"
+. "$SETUPPATH/credentials.private"
 
 setup_patch /etc/ssh/sshd_config
 
@@ -220,7 +220,7 @@ apt-get -y -t stretch-backports install certbot python-certbot-apache
 
 ### Set up databases
 
-# passwords are sourced from the setup.private file
+# passwords are sourced from the credentials.private file
 
 # MySQL
 # local access is provided to root via socket connection
