@@ -1,2 +1,1 @@
-#deb http://debmirror.netcup.net/debian unstable main contrib non-free
-deb http://ftp.debian.org/debian jessie-backports main contrib non-free
+deb http://ftp.debian.org/debian stretch-backports main

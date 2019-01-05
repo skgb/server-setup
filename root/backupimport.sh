@@ -51,15 +51,28 @@ mysqladmin flush-privileges
 mv -v postfix-virtual /etc/postfix/virtual
 /etc/postfix/reload
 
-bunzip2 neo4jfulldump.cypher.bz2
 echo "Cleaning Neo4j database:"
-/usr/bin/neo4j-shell -c 'MATCH (n) DETACH DELETE n;'
-if [ `du -b neo4jfulldump.cypher | cut -f1` -ne 15 ] ; then
-	# Importing this will cause an "Unknown command ;" error if the dump happens to be empty. As of neo4j 2.3.3, empty dumps have a size of 15 bytes, exactly.
-	echo "Neo4j database import:"
-	/usr/bin/neo4j-shell -file neo4jfulldump.cypher
+cypher-shell -u neo4j --format verbose 'MATCH (n) DETACH DELETE n;'
+if [ -f neo4jfulldump.cypher.bz2 ] ; then
+	bunzip2 neo4jfulldump.cypher.bz2
+	if [ `du -b neo4jfulldump.cypher | cut -f1` -ne 15 ] ; then
+		# Importing this will cause an "Unknown command ;" error if the dump happens to be empty. As of neo4j 2.3.3, empty dumps have a size of 15 bytes, exactly.
+		echo "Neo4j database import:"
+		# Neo4j 2.x exports have a different syntax than what the 3.x cypher-shell requires
+		sed -e '/^begin$/s//:begin/' -e '/^commit$/s//:commit/' -e '/^create \(_[0-9]*\)-/s//create (\1)-/' -e '/->\(_[0-9]*\)$/s//->(\1)/' < neo4jfulldump.cypher > neo4j3fulldump.cypher
+		cp neo4j3fulldump.cypher /root
+		cypher-shell -u neo4j --format verbose < neo4j3fulldump.cypher
+	else
+		echo "Neo4j database dump empty; import skipped."
+	fi
+elif [ -f graph.db.dump ] ; then
+	systemctl stop neo4j
+	sleep 2  # wait for Neo4j to shut down
+	#sudo -u neo4j
+	neo4j-admin load --from=graph.db.dump --database=graph.db --force
+	systemctl start neo4j
 else
-	echo "Neo4j database dump empty; import skipped."
+	echo "No Neo4j database dump found in import data; skipped."
 fi
 
 chown -R www-data:www-data Data

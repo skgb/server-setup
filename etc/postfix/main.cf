@@ -10,12 +10,15 @@ smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
 biff = no
 
 # appending .domain is the MUA's job.
-append_dot_mydomain = no
+#append_dot_mydomain = no
 
 # Uncomment the next line to generate "delayed mail" warnings
 #delay_warning_time = 4h
 
 readme_directory = no
+
+# See http://www.postfix.org/COMPATIBILITY_README.html
+compatibility_level = 2
 
 # TLS parameters
 smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
@@ -29,9 +32,9 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 # These are effectively the default values, so it doesn't make much sense to spell them out:
 #smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-#myhostname = clyde.skgb.de
+#myhostname = solent.skgb.de
 #myorigin = /etc/mailname
-#mydestination = clyde.skgb.de, localhost.skgb.de, v22015123165229836.yourvserver.net, localhost.yourvserver.net, localhost
+#mydestination = solent.skgb.de, localhost.skgb.de, v22019013165280210.megasrv.de, localhost.megasrv.de, localhost
 #relayhost = 
 #inet_interfaces = all
 
@@ -48,7 +51,7 @@ recipient_delimiter = +
 
 
 #######################################################################
-## CUSTOM for Clyde
+## CUSTOM for Solent
 
 # Allow relay to internet from these hosts:
 mynetworks =
@@ -56,6 +59,9 @@ mynetworks =
 	127.0.0.1/32
 	[::ffff:127.0.0.0]/104
 	[::1]/128
+# Solent:
+	85.235.65.80/32
+	[2a03:4000:32:15d::1]/128
 # Clyde:
 	188.68.50.113/32
 	[2a03:4000:6:d111::1]/128
@@ -63,7 +69,7 @@ mynetworks =
 	92.51.132.119/32
 	[2a01:488:66:1000:5c33:8477:0:1]/128
 # Kenmare (SKGB VSM @ Host Europe):
-	176.28.33.143/32
+#	176.28.33.143/32
 # Tay:
 #	87.230.21.7/32
 
@@ -95,7 +101,7 @@ unknown_client_reject_code = 554
 unknown_hostname_reject_code = 554
 unknown_address_reject_code = 554
 
-address_verify_sender = double-bounce@clyde.skgb.de
+address_verify_sender = double-bounce@solent.skgb.de
 
 disable_vrfy_command = yes
 

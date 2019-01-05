@@ -8,7 +8,7 @@
 
 BACKUPDIR=/root/backups
 BACKUPFILE=clydebackup.tar
-BACKUPKEYS='-r 75EB52B0 -r EF330646'  # Arne + Clyde Automated Backup Test
+BACKUPKEYS='-r 75EB52B0 -r 260EC33C'  # Arne + SKGB Automated Backups
 BACKUPSRVFILE=clydesrv.tar
 #BACKUPMYSQLDBS='skgb_intern skgb_web db10959533-wordpressdev'
 BACKUPMYSQLDBS='postfix skgb_web'
@@ -62,8 +62,20 @@ tar -rf "$BACKUPDIR/databases.tar" Data
 cd "$BACKUPDIR"
 
 # do a neo4j dump
-/usr/bin/neo4j-shell -readonly -c dump | bzip2 > neo4jfulldump.cypher.bz2
-tar -rf databases.tar neo4jfulldump.cypher.bz2
+if which neo4j-shell > /dev/null
+then
+	# Neo4j 2
+	neo4j-shell -readonly -c dump | bzip2 > neo4jfulldump.cypher.bz2
+	tar -rf databases.tar neo4jfulldump.cypher.bz2
+else
+	# Neo4j 3
+	NEO4JDUMPDIR=`sudo -u neo4j mktemp -dt neo4jdump.XXXXXX` || exit 1
+	sudo -u neo4j neo4j-admin dump --to="$NEO4JDUMPDIR/graph.db.dump"
+	mv "$NEO4JDUMPDIR/graph.db.dump" .
+	tar -rf databases.tar graph.db.dump
+	rm -Rf "$NEO4JDUMPDIR"
+	# possible alternative: APOC, see <https://neo4j.com/developer/kb/export-sub-graph-to-cypher-and-import/>
+fi
 
 # copy the virtual alias table
 # (technically not a database, but the easiest way is to treat it like one anyway)

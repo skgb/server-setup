@@ -61,8 +61,8 @@ Setup des Servers
 	- `clydesrv.tar.gz` – Backup von `/srv`
 
 1.	Sicherstellen, dass gerade keine Nutzer auf dem Server arbeiten.
-	Server im Control Panel stoppen (`Steuerung` → `poweroff`), neues
-	Image aufspielen (`image` → `Debian Jessie` → `Minimal` → `große
+	Server im Control Panel stoppen (`Steuerung` → `Erzwungen abschalten`), neues
+	Image aufspielen (`Medien` → `Images` → `Debian 9` → `Minimal` → `große
 	Partition`).
 	
 	*Dauer: ca. 4 Min.*
@@ -75,8 +75,8 @@ Setup des Servers
 	
 	Wenn nötig, zuvor alte Host-Keys lokal löschen:
 	```bash
-	ssh-keygen -R clyde.skgb.de
-	ssh-keygen -R 188.68.50.113
+	ssh-keygen -R solent.skgb.de
+	ssh-keygen -R 85.235.65.80
 	
 	```
 
@@ -91,8 +91,8 @@ Setup des Servers
 	Außerdem die unter 1. gelisteten weiteren Dateien nach
 	`/root/clydesetup` kopieren:
 	```bash
-	scp clydebackup.tar root@clyde.skgb.de:clydesetup
-	scp clydesrv.tar.gz root@clyde.skgb.de:clydesetup
+	scp clydebackup.tar root@solent.skgb.de:clydesetup
+	scp clydesrv.tar.gz root@solent.skgb.de:clydesetup
 	
 	```
 

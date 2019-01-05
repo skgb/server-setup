@@ -1,6 +1,6 @@
 --- /etc/apache2/conf-available/security.conf	2014-09-18 08:17:00.000000000 +0000
 +++ /etc/apache2/conf-available/security.conf	2014-12-13 00:00:00.000000000 +0000
-@@ -23,6 +23,6 @@
+@@ -22,6 +22,6 @@
  # Set to one of:  Full | OS | Minimal | Minor | Major | Prod
  # where Full conveys the most information, and Prod the least.
 -#ServerTokens Minimal

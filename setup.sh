@@ -33,8 +33,9 @@ fi
 # init
 chown -R root:root "$SETUPPATH"
 export LANG=C.UTF-8
+export LC_CTYPE=
 update-locale LANG=C.UTF-8
-#export LC_ALL=C
+apt-get install patch
 
 
 
@@ -195,16 +196,17 @@ apt-get install gnupg wget  # these should be installed by default, making this 
 wget -O - https://debian.neo4j.org/neotechnology.gpg.key | apt-key add -  # Import Neo4j signing key
 setup_copy /etc/apt/sources.list.d/neo4j.list R
 apt-get update
-# Neo4j 3.0 requires Java 8, which openjdk only offers for Debian 9 at this point => stick to Neo4j 2.3 for now
-apt-get install neo4j=2.3.6
-apt-mark hold neo4j
+apt-get install neo4j
+#apt-get install neo4j=2.3.6
+#apt-mark hold neo4j
+setup_copy /etc/security/limits.d/neo4j R
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y install $(cat installed-software.log | awk '{print $1}') || exit
 export DEBIAN_FRONTEND=
 
 # see https://www.bsi.bund.de/DE/Themen/Cyber-Sicherheit/Aktivitaeten/CERT-Bund/CERT-Reports/HOWTOs/Offene-Portmapper-Dienste/Offene-Portmapper-Dienste_node.html
-apt-get remove rpcbind
+apt-get remove rpcbind  # probably no longer installed by default => no-op
 
 # install Let's Encrypt for SSL
 # (unavailable in Debian 8 => backports)
@@ -212,7 +214,7 @@ setup_copy /etc/apt/sources.list.d/letsencrypt.list R
 apt-get update
 # apt-cache policy certbot
 # apt-get install python-setuptools=20.10.1-1.1~bpo8+1 python-pkg-resources=20.10.1-1.1~bpo8+1
-apt-get -y -t jessie-backports install certbot python-certbot-apache
+apt-get -y -t stretch-backports install certbot python-certbot-apache
 
 
 
@@ -221,19 +223,24 @@ apt-get -y -t jessie-backports install certbot python-certbot-apache
 # passwords are sourced from the setup.private file
 
 # MySQL
+# local access is provided to root via socket connection
+# for remote access (SSH only), a rootssh user is added
 mysqladmin flush-privileges
+#mysql mysql --user=root <<EOF
+#SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+##SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+##SET PASSWORD FOR 'root'@'::1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
+#DELETE FROM user WHERE user = 'root' AND password = '';
 mysql mysql --user=root <<EOF
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQL_ROOT_PASSWORD');
-SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
-SET PASSWORD FOR 'root'@'::1' = PASSWORD('$MYSQL_ROOT_PASSWORD');
-DELETE FROM user WHERE user = 'root' AND password = '';
+CREATE USER 'rootssh'@'127.0.0.1' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
+GRANT ALL PRIVILEGES ON *.* TO 'rootssh'@'127.0.0.1';
 FLUSH PRIVILEGES;
 EOF
-#CREATE USER 'root'@'clyde.skgb.de' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
-#GRANT ALL PRIVILEGES ON *.* TO 'root'@'clyde.skgb.de';
+#CREATE USER 'root'@'solent.skgb.de' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
+#GRANT ALL PRIVILEGES ON *.* TO 'root'@'solent.skgb.de';
 
-setup_copy /root/.my.cnf 600
-sed -e "/^password = .*/s//password = \"$MYSQL_ROOT_PASSWORD\"/" -i /root/.my.cnf
+#setup_copy /root/.my.cnf 600
+#sed -e "/^password = .*/s//password = \"$MYSQL_ROOT_PASSWORD\"/" -i /root/.my.cnf
 
 mysql <<EOF
 CREATE USER 'backup'@'localhost' IDENTIFIED BY '$MYSQL_BACKUP_PASSWORD';
@@ -244,14 +251,13 @@ CREATE USER 'postfix'@'127.0.0.1' IDENTIFIED BY '$MYSQL_POSTFIX_PASSWORD';
 GRANT SELECT ON postfix.* TO 'postfix'@'127.0.0.1';
 CREATE USER 'skgb-web'@'localhost' IDENTIFIED BY '$MYSQL_WP_WWW_PASSWORD';
 GRANT ALL PRIVILEGES ON \`skgb_web\`.* TO 'skgb-web'@'localhost';
-CREATE USER 'db10959533-wpdev'@'localhost' IDENTIFIED BY '$MYSQL_WP_DEV_PASSWORD';
-GRANT ALL PRIVILEGES ON \`db10959533-wordpressdev\`.* TO 'db10959533-wpdev'@'localhost';
+CREATE USER 'skgb-dev'@'localhost' IDENTIFIED BY '$MYSQL_WP_DEV_PASSWORD';
+GRANT ALL PRIVILEGES ON \`skgb_dev\`.* TO 'skgb-dev'@'localhost';
 EOF
-# NB: mysql doesn't seem to be accessible over the network
 
 # Neo4j
 curl -iH "Content-Type: application/json" -X POST -d "{\"password\":\"$NEO4J_PASSWORD\"}" -u neo4j:neo4j http://localhost:7474/user/neo4j/password
-setup_patch "/etc/neo4j/neo4j.properties"
+#setup_patch "/etc/neo4j/neo4j.properties"
 
 
 
@@ -271,8 +277,8 @@ setup_copy /etc/postfix/reload X
 ### Set up backups
 mkdir -p /root/.gnupg
 chmod 700 /root/.gnupg
-mv -v backupkey.private /root/.gnupg/EF330646-sec.asc
-setup_repo_permissions /root/.gnupg/EF330646-sec.asc 600
+mv -v backupkey.private /root/.gnupg/260EC33C-sec.asc
+setup_repo_permissions /root/.gnupg/260EC33C-sec.asc 600
 setup_copy /root/.gnupg/75EB52B0.asc 600
 setup_copy /root/.gnupg/816EE403.asc 600
 setup_copy /root/.gnupg/otrust.txt 600
@@ -293,12 +299,13 @@ setup_copy /etc/cron.hourly/backup X
 ### Get transient data from backup
 # Significantly this includes reading an encrypted database dump.
 # Requires an interactive shell for PGP passphrase input!
+export NEO4J_PASSWORD="$NEO4J_PASSWORD"
 /root/backupimport.sh "$SETUPPATH/clydebackup.tar" -y || SETUPFAIL=1
 
 # the backup import will overwrite the password, in which case logrotate may start to send daily email complaints to root
 # (because of "error: 'Access denied for user 'debian-sys-maint'@'localhost' (using password: YES)'", which isn't given in the email though)
 # solution: read new password from /etc/mysql/debian.cnf and set that as the new password for debian-sys-maint in mysql, overwriting the imported backup
-echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql ) || echo ' password unchanged (error!)' && SETUPFAIL=2
+#echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql ) || echo ' password unchanged (error!)' && SETUPFAIL=2
 mysqladmin flush-privileges
 
 # the backup import will overwrite the MTA's virtual alias table
@@ -368,6 +375,7 @@ a2enconf ssl
 setup_copy /etc/cron.daily/apachessl X
 setup_copy /etc/php5/apache2/conf.d/skgb-intern.php.ini R
 
+setup_copy /srv/Default/index.shtml R
 a2dissite 000-default
 mv "$APACHE_DIR/sites-available/000-default.conf" "$APACHE_DIR/sites-available/000-default.conf.orig"  # HFS compatibility
 setup_copy "$APACHE_DIR/sites-available/000-Default.conf" R
@@ -410,13 +418,20 @@ apachectl start
 echo "Obtaining SSL certificate from Let's Encrypt..."
 #letsencrypt certonly --test-cert --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domains intern.skgb.de,intern2.skgb.de,clyde.skgb.de
 
-if certbot certonly --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domain skgb.de \
-  --domain archiv.skgb.de \
-  --domain clyde.skgb.de \
-  --domain intern.skgb.de \
-  --domain intern2.skgb.de \
-  --domain servo.skgb.de \
-  --domain www.skgb.de
+#  --server https://acme-v02.api.letsencrypt.org/directory \
+if certbot certonly --non-interactive --agree-tos --email webmaster+le@skgb.de \
+  --apache \
+  --test-cert --dry-run \
+  --domain solent.skgb.de
+#  --domain skgb.de \
+#  --domain clyde.skgb.de --domain solent.skgb.de \
+#  --domain intern.skgb.de --domain intern2.skgb.de --domain i.skgb.de \
+#  --domain archiv.skgb.de --domain a.skgb.de \
+#  --domain cloud.skgb.de --domain office.skgb.de \
+#  --domain dev.skgb.de --domain d.skgb.de --domain ip6.skgb.de \
+#  --domain servo.skgb.de \
+#  --domain www.skgb.de
+#  --domain *.skgb.de
 then
   echo "Let's Encrypt was successful; switching out certificate links ..."
   rm -f /etc/ssl/skgb/fullchain.pem /etc/ssl/skgb/privkey.pem
@@ -441,7 +456,7 @@ setup_copy /etc/init.d/skgb-intern.sh X
 
 ### IPv6
 setup_copy /etc/network/interfaces.d/ip6 R
-# also requires activation in VCP and a cold reboot
+# also requires activation in SCP and a cold reboot
 
 
 
@@ -451,6 +466,26 @@ setup_copy /etc/network/interfaces.d/ip6 R
 #setup_copy /etc/bind/skgb.de R
 #/etc/init.d/bind9 reload
 #setup_copy /etc/bind/reload X
+
+
+
+### CommonMark
+
+#apt-get install cmark libcmark-dev
+# The CommonMark libcmark API isn't quite finalised and thus not
+# available through dpkg as of this time (ETA Debian 10). We have to
+# build it ourselves for now.
+apt-get install build-essential cmake
+mkdir -p /opt/cmark
+cd /opt/cmark
+curl -LO https://github.com/commonmark/cmark/archive/0.28.3.tar.gz
+tar -xzf 0.28.3.tar.gz
+rm -f 0.28.3.tar.gz
+cd cmark-0.28.3
+make
+#make test
+#echo -n "*test*\n" | cmark
+make install
 
 
 
@@ -483,40 +518,54 @@ echo -n "Beginning to brew Perl: "
 date
 
 export PERLBREW_ROOT=/opt/perlbrew
-curl -kL http://install.perlbrew.pl | bash
+curl -kL https://install.perlbrew.pl | bash
 echo "source $PERLBREW_ROOT/etc/bashrc" >> /root/.bashrc
 source "$PERLBREW_ROOT/etc/bashrc"  # note sure if this is enough ... the docs require a new shell
 perlbrew init
-PERL_INSTALL_VERSION=$( perlbrew available | grep perl-5.24 | cut -b 3- )
-perlbrew install "$PERL_INSTALL_VERSION" || SETUPFAIL=21
+#PERL_INSTALL_VERSION=$( perlbrew available | grep perl-5.28 | cut -b 3- )
+PERL_INSTALL_VERSION=perl-5.28.1
+# On dual core CPUs (like Solent), 2 jobs save a *lot* of time, while even more jobs save very little.
+BREW_JOBS=3
+perlbrew install -j "$BREW_JOBS" "$PERL_INSTALL_VERSION" || SETUPFAIL=21
 #perlbrew use $( perlbrew available | grep perl-5.24 | cut -b 3- )  # 'use' means this session only
 perlbrew switch "$PERL_INSTALL_VERSION"
 
 echo -n "Finished brewing Perl: "
 date
 
-cpan -u
+export TEST_JOBS="$BREW_JOBS"
+curl -L https://cpanmin.us | perl - App::cpanminus
+
+cpanm App::cpanoutdated
+echo "Updating dual life modules:"
+cpan-outdated --verbose | sed -e 's/ *[^ ]*$//'
+cpan-outdated | cpanm
 
 # The brew tends to fail on the first try. As a last resort, --notest should help:
 # perlbrew --notest install perl-stable
 # perlbrew --force install perl-stable
 
+# Actually, there is an argument to be made for always installing with --notest:
+# <http://www.modernperlbooks.com/mt/2012/01/speed-up-perlbrew-with-test-parallelism.html#comment-1158>
+
 # not all of these modules may actually be required - some might be in this list just because I need them on Cat or Pentland
 
 # some XS modules require additional packages for linking
-apt-get -y install libxml2-dev zlib1g-dev libxslt1-dev libssl-dev libmysqlclient-dev
-cpan XML::LibXML XML::LibXSLT HTML::HTML5::Parser IO::Socket::SSL DBD::mysql || SETUPFAIL=22
+apt-get -y install libxml2-dev zlib1g-dev libxslt1-dev libssl-dev libmariadbclient-dev
+cpanm XML::LibXML XML::LibXSLT HTML::HTML5::Parser IO::Socket::SSL DBD::mysql || SETUPFAIL=22
 
-# the pure Perl modules should be installed after the XS modules to make sure
+# the pure Perl modules should be installed after the linked XS modules to make sure
 # that dependencies can be properly satisfied
-cpan Devel::StackTrace Text::Trim String::Random HTML::Entities DBI DBD::mysql || SETUPFAIL=23
-cpan Mojolicious DateTime DateTime::Format::ISO8601 Time::Date Mojo::SMTP::Client Email::MessageID || SETUPFAIL=24
-cpan String::Util List::MoreUtils Util::Any Digest::MD5 Mojolicious::Plugin::Authorization || SETUPFAIL=25
-cpan Perl::Version SemVer Text::WordDiff || SETUPFAIL=26
-cpan REST::Client Cpanel::JSON::XS JSON::MaybeXS Regexp::Common || SETUPFAIL=27
+cpanm Module::Metadata Module::Install Devel::StackTrace Test::More Test::Exception Test::Warnings Text::Trim String::Random HTML::Entities DBI DBD::mysql || SETUPFAIL=23
+cpanm Mojolicious DateTime DateTime::Format::ISO8601 Time::Date Mojo::SMTP::Client Email::MessageID || SETUPFAIL=24
+cpanm String::Util List::MoreUtils Util::Any Digest::MD5 Mojolicious::Plugin::Authorization || SETUPFAIL=25
+cpanm Perl::Version SemVer Text::WordDiff || SETUPFAIL=26
+cpanm LWP::UserAgent REST::Client Cpanel::JSON::XS Try::Tiny URI || SETUPFAIL=27
+cpanm JSON::MaybeXS Regexp::Common || SETUPFAIL=27
+cpanm CommonMark || SETUPFAIL=27
 
 # Neo4j
-cpan -fi LWP::Protocol::https REST::Neo4p || SETUPFAIL=28
+cpanm -n LWP::Protocol::https REST::Neo4p || SETUPFAIL=28
 
 # NOT currently used on Clyde: proj
 #apt-get -y install libproj-dev

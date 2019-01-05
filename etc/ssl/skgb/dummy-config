@@ -37,10 +37,18 @@ subjectAltName      = @alt_names
 nsComment           = "dummy certificate"
 
 [alt_names]
-DNS.1 = skgb.de
-DNS.2 = archiv.skgb.de
-DNS.3 = clyde.skgb.de
-DNS.4 = intern.skgb.de
-DNS.5 = intern2.skgb.de
-DNS.6 = servo.skgb.de
-DNS.7 = www.skgb.de
+DNS.1  = skgb.de
+DNS.2  = a.skgb.de
+DNS.3  = archiv.skgb.de
+DNS.4  = cloud.skgb.de
+DNS.5  = clyde.skgb.de
+DNS.6  = d.skgb.de
+DNS.7  = dev.skgb.de
+DNS.8  = i.skgb.de
+DNS.9  = intern.skgb.de
+DNS.10 = intern2.skgb.de
+DNS.11 = ip6.skgb.de
+DNS.12 = office.skgb.de
+DNS.13 = servo.skgb.de
+DNS.14 = solent.skgb.de
+DNS.15 = www.skgb.de

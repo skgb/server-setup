@@ -27,8 +27,8 @@ passwd						install
 patch						install
 perl						install
 libapache2-mod-perl2		install
-php5						install
-php5-mysql					install
+php							install
+php-mysql					install
 postfix						install
 postfix-mysql				install
 sed							install

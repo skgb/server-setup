@@ -1,5 +1,5 @@
 # /etc/profile.d/motd.sh
-# Clyde login message
+# Solent login message
 
 
 # Print info on current MTA mail queue. This is supposed to alert privileged
@@ -62,4 +62,4 @@ fi
 echo
 
 
-echo "Welcome to Clyde!"
+echo "Welcome to Solent!"

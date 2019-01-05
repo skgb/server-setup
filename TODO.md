@@ -15,12 +15,6 @@
 - port 3000 sperren -> kann Mojo statt auf 0.0.0.0 auf 127.0.0.1 gebunden werden?
 <https://www.google.de/search?q=bind+mojolicious+to+ip>
 
-- rpc absichern <message://%3cc32270375552a5c45f1f0b14aae88cfb36787eb6@server01%3e>
-rpcinfo -p
-service rpcbind stop
-systemctl disable rpcbind
-rpcinfo -p
-
 - monit ins repo: Ulf weiß die Details nicht mehr
 
 - joe: /etc/joe/joerc
@@ -48,7 +42,5 @@ rpcinfo -p
 <https://sysadvent.blogspot.com/2017/12/day-2-shifting-left-securely-with-inspec.html>
 
 - Ulf: backports sind nicht schlimm, kein grund schnell zu wechseln, gerne paar monate warten, oder auch länger
-
-- mysql root password: in `/root/.my.cnf`!
 
 - Git-Repo: könnte bei Bedarf via <https://gogs.io/> zugänglich gemacht werden
