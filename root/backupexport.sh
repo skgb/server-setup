@@ -89,6 +89,38 @@ rm -f neo4jfulldump.cypher.bz2 postfix-virtual databases.tar databases.tar.gpg
 
 
 
+# preserve the original credentials setup file
+cp /root/clydesetup/credentials.private credentials.private.orig
+tar -cf serverconfig.tar credentials.private.orig
+
+# add SSL certificates (volatile b/c letsencrypt issues new ones every other month)
+#cp /root/clydesetup/credentials.private credentials.private.orig
+#tar -cf serverconfig.tar credentials.private.orig
+mkdir le-archive
+if LE_MAX=`perl -e '$a=0;for(split/\s+/,\`ls /etc/letsencrypt/archive/skgb.de\`){/^[a-z]+(\d+)\.pem$/;$b=$1||0;$a=$b if$b>$a}exit 1 if!$a;print$a;'`
+then
+	cp "/etc/letsencrypt/archive/skgb.de/cert$LE_MAX.pem" le-archive
+	cp "/etc/letsencrypt/archive/skgb.de/chain$LE_MAX.pem" le-archive
+	cp "/etc/letsencrypt/archive/skgb.de/fullchain$LE_MAX.pem" le-archive
+	cp "/etc/letsencrypt/archive/skgb.de/privkey$LE_MAX.pem" le-archive
+else
+	echo "Backup failed: No certificates found in Let's Encrypt 'archive' directory."
+	exit 1
+fi
+tar -rf serverconfig.tar le-archive
+cp -R /etc/letsencrypt/accounts le-accounts
+rm -Rf le-accounts/acme-staging*
+tar -rf serverconfig.tar le-accounts
+cp -R /etc/letsencrypt/renewal le-renewal
+tar -rf serverconfig.tar le-renewal
+
+# encrypt serverconfig dump
+eval gpg2 $BACKUPKEYS --encrypt serverconfig.tar
+tar -rf "$BACKUPFILE" serverconfig.tar.gpg
+rm -Rf credentials.private.orig le-archive le-accounts le-renewal serverconfig.tar serverconfig.tar.gpg
+
+
+
 # this is basically for volatile / transient data only
 
 # include non-transient data like apache document roots? -> NO!, these are pulled from outside sources like repositories by the setup routines (should be, anyway - TODO)

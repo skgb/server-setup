@@ -36,13 +36,21 @@ echo -n "importing backup"
 [ -e "backuptimestamp" ] && echo -n " '`cat backuptimestamp`'"
 echo
 
+sleep 1  # give user time to read the intro
 if [ -f databases.tar.gpg ] ; then
-	sleep 1  # give user time to read the intro
 	gpg2 databases.tar.gpg || exit 1
+fi
+if [ -f serverconfig.tar.gpg ] ; then
+	gpg2 serverconfig.tar.gpg || exit 1
 fi
 if [ -f databases.tar ] ; then
 	tar -xf databases.tar
 fi
+if [ -f serverconfig.tar ] ; then
+	tar -xf serverconfig.tar
+fi
+
+
 
 bunzip2 -c mysqlstructure.sql.bz2 | mysql --user=root
 bunzip2 -c mysqldata.sql.bz2 | mysql --user=root
@@ -79,6 +87,33 @@ chown -R www-data:www-data Data
 chmod -R go-rwx Data
 rm -Rf /srv/Data/*
 mv Data /srv
+
+
+
+mkdir -p /etc/letsencrypt/accounts
+chmod 700 /etc/letsencrypt/accounts
+mv le-accounts/* /etc/letsencrypt/accounts
+mkdir -p /etc/letsencrypt/archive/skgb.de
+chmod 700 /etc/letsencrypt/archive
+mv le-archive/* /etc/letsencrypt/archive/skgb.de
+mkdir -p /etc/letsencrypt/renewal
+mv le-renewal/skgb.de.conf /etc/letsencrypt/renewal
+
+if [ -f /etc/letsencrypt/live/skgb.de/cert.pem ] ; then
+	echo "Let's Encrypt 'live' links already exist; skipped."
+	echo "You must manually verify that these links point to the correct certificates!"
+elif LE_MAX=`perl -e '$a=0;for(split/\s+/,\`ls /etc/letsencrypt/archive/skgb.de\`){/^[a-z]+(\d+)\.pem$/;$b=$1||0;$a=$b if$b>$a}exit 1 if!$a;print$a;'` ; then
+	mkdir -p /etc/letsencrypt/live/skgb.de
+	chmod 700 /etc/letsencrypt/live
+	ln -s "../../archive/skgb.de/cert$LE_MAX.pem" /etc/letsencrypt/live/skgb.de/cert.pem
+	ln -s "../../archive/skgb.de/chain$LE_MAX.pem" /etc/letsencrypt/live/skgb.de/chain.pem
+	ln -s "../../archive/skgb.de/fullchain$LE_MAX.pem" /etc/letsencrypt/live/skgb.de/fullchain.pem
+	ln -s "../../archive/skgb.de/privkey$LE_MAX.pem" /etc/letsencrypt/live/skgb.de/privkey.pem
+else
+	echo "No certificates found in Let's Encrypt 'archive' directory."
+fi
+
+
 
 rm -Rf "$BACKUPDIR"/*
 rm -Rvf "$BACKUPDIR"

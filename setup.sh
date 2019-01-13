@@ -215,6 +215,14 @@ apt-get update
 # apt-cache policy certbot
 # apt-get install python-setuptools=20.10.1-1.1~bpo8+1 python-pkg-resources=20.10.1-1.1~bpo8+1
 apt-get -y -t stretch-backports install certbot python-certbot-apache
+# wildcard certs require DNS validation
+curl -LO "https://github.com/kegato/letsencrypt-inwx/releases/download/1.1.1/letsencrypt-inwx_1.1.1_amd64.deb"
+dpkg -i letsencrypt-inwx_1.1.1_amd64.deb
+rm -f letsencrypt-inwx_1.1.1_amd64.deb
+setup_copy /etc/letsencrypt-inwx-cred 600
+echo "$SKGB_INWX_PASSWORD" >> /etc/letsencrypt-inwx-cred
+# possible alternative: <https://github.com/oGGy990/certbot-dns-inwx>
+
 
 
 
@@ -321,6 +329,24 @@ openssl req -config /etc/ssl/skgb/dummy-config -x509 -newkey rsa -days 1 -nodes 
 ln -s dummy-cert.pem /etc/ssl/skgb/fullchain.pem
 ln -s dummy-key.pem /etc/ssl/skgb/privkey.pem
 
+# Actually, the self-signed certificate is no longer really necessary.
+# We now restore our existing CA-signed certificate from the backup, so
+# we should be just about all set at this point.
+
+if [ -f /etc/letsencrypt/live/skgb.de/fullchain.pem ] ; then
+  echo "Let's Encrypt is available; switching out certificate links ..."
+  rm -f /etc/ssl/skgb/fullchain.pem /etc/ssl/skgb/privkey.pem
+  ln -vs /etc/letsencrypt/live/skgb.de/fullchain.pem /etc/ssl/skgb/fullchain.pem
+  ln -vs /etc/letsencrypt/live/skgb.de/privkey.pem /etc/ssl/skgb/privkey.pem
+#  apachectl graceful
+else
+  echo "Error with Let's Encrypt."
+  echo "*** Using self-signed certificate! ***"
+  SETUPFAIL=3
+fi
+
+setup_copy /etc/cron.daily/letsencrypt-skgb X
+
 
 
 ### Apache
@@ -410,41 +436,6 @@ chmod 600 /srv/Data/*
 apachectl graceful-stop
 apachectl configtest
 apachectl start
-
-
-
-### CA-signed SSL certificate
-
-echo "Obtaining SSL certificate from Let's Encrypt..."
-#letsencrypt certonly --test-cert --apache --non-interactive --agree-tos --email webmaster+le@skgb.de --domains intern.skgb.de,intern2.skgb.de,clyde.skgb.de
-
-#  --server https://acme-v02.api.letsencrypt.org/directory \
-if certbot certonly --non-interactive --agree-tos --email webmaster+le@skgb.de \
-  --apache \
-  --test-cert --dry-run \
-  --domain solent.skgb.de
-#  --domain skgb.de \
-#  --domain clyde.skgb.de --domain solent.skgb.de \
-#  --domain intern.skgb.de --domain intern2.skgb.de --domain i.skgb.de \
-#  --domain archiv.skgb.de --domain a.skgb.de \
-#  --domain cloud.skgb.de --domain office.skgb.de \
-#  --domain dev.skgb.de --domain d.skgb.de --domain ip6.skgb.de \
-#  --domain servo.skgb.de \
-#  --domain www.skgb.de
-#  --domain *.skgb.de
-then
-  echo "Let's Encrypt was successful; switching out certificate links ..."
-  rm -f /etc/ssl/skgb/fullchain.pem /etc/ssl/skgb/privkey.pem
-  ln -vs /etc/letsencrypt/live/skgb.de/fullchain.pem /etc/ssl/skgb/fullchain.pem
-  ln -vs /etc/letsencrypt/live/skgb.de/privkey.pem /etc/ssl/skgb/privkey.pem
-  apachectl graceful
-else
-  echo "Error with Let's Encrypt."
-  echo "*** Using self-signed certificate! ***"
-  SETUPFAIL=3
-fi
-
-setup_copy /etc/cron.daily/letsencrypt-skgb X
 
 
 
