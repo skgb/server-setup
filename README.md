@@ -21,7 +21,7 @@ gelegentlich absichtlich einzureißen und neu aufzusetzen. Probleme mit
 `setup.sh` fallen dann rechtzeitig auf und können z. B. in einem
 geplanten Wartungsfenster behoben werden.
 
-Insgesamt dauert der ganze Vorgang locker eine knappe Stunde.
+Insgesamt dauert der ganze Vorgang eine knappe halbe Stunde.
 
 Alles in allem lässt die Qualität von `setup.sh` durchaus zu wünschen
 übrig: „quick and dirty“ und so. Aber es scheint erst mal gut genug zu
@@ -118,9 +118,7 @@ Setup des Servers
 	weitgehend laufen sollten.
 	
 	Das Skript erwartet nur wenige Nutzerinteraktionen:
-	- `apt-get install` bestätigen *(wenige Sekunden nach Start)*
-	- Passphrase des Backup-Schlüssels eingeben *(etwa 3 Min. nach Start)*
-	- CPAN-Konfiguration *(etwa 18 Min. nach Start)*
+	- Passphrase des Backup-Schlüssels eingeben *(etwa 2 Min. nach Start)*
 
 1.	Server kalt neustarten (ausloggen, im Control Panel `Steuerung` →
 	`poweroff` + `start`). Der kalte Neustart wird [angeblich](http://www.netcup-wiki.de/wiki/Zus%C3%A4tzliche_IP_Adresse_konfigurieren#IPv6)

@@ -192,11 +192,11 @@ echo
 apt-get upgrade
 
 # make Neo4j available in apt sources
-apt-get install gnupg wget  # these should be installed by default, making this a no-op
+apt-get -y install gnupg wget  # these should be installed by default, making this a no-op
 wget -O - https://debian.neo4j.org/neotechnology.gpg.key | apt-key add -  # Import Neo4j signing key
 setup_copy /etc/apt/sources.list.d/neo4j.list R
 apt-get update
-apt-get install neo4j
+apt-get -y install neo4j
 #apt-get install neo4j=2.3.6
 #apt-mark hold neo4j
 setup_copy /etc/security/limits.d/neo4j R
@@ -209,7 +209,6 @@ systemctl enable neo4j.service
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y install $(cat "$SETUPPATH/installed-software.log" | awk '{print $1}') || exit
-export DEBIAN_FRONTEND=
 
 # see https://www.bsi.bund.de/DE/Themen/Cyber-Sicherheit/Aktivitaeten/CERT-Bund/CERT-Reports/HOWTOs/Offene-Portmapper-Dienste/Offene-Portmapper-Dienste_node.html
 apt-get remove rpcbind  # probably no longer installed by default => no-op
@@ -221,6 +220,7 @@ apt-get update
 # apt-cache policy certbot
 # apt-get install python-setuptools=20.10.1-1.1~bpo8+1 python-pkg-resources=20.10.1-1.1~bpo8+1
 apt-get -y -t stretch-backports install certbot python-certbot-apache
+export DEBIAN_FRONTEND=
 # wildcard certs require DNS validation
 curl -LO "https://github.com/kegato/letsencrypt-inwx/releases/download/1.1.1/letsencrypt-inwx_1.1.1_amd64.deb"
 dpkg -i letsencrypt-inwx_1.1.1_amd64.deb
@@ -598,7 +598,7 @@ setup_copy /etc/network/interfaces.d/ip6 R
 # The CommonMark libcmark API isn't quite finalised and thus not
 # available through dpkg as of this time (ETA Debian 10). We have to
 # build it ourselves for now.
-apt-get install build-essential cmake
+apt-get -y install build-essential cmake
 mkdir -p /opt/cmark
 cd /opt/cmark
 curl -LO https://github.com/commonmark/cmark/archive/0.28.3.tar.gz
@@ -657,12 +657,13 @@ echo -n "Finished brewing Perl: "
 date
 
 export TEST_JOBS="$BREW_JOBS"
+export TESTING="--notest"
 curl -L https://cpanmin.us | perl - App::cpanminus
 
-cpanm App::cpanoutdated
+cpanm $TESTING App::cpanoutdated
 echo "Updating dual life modules:"
 cpan-outdated --verbose | sed -e 's/ *[^ ]*$//'
-cpan-outdated | cpanm
+cpan-outdated | cpanm $TESTING
 
 # The brew tends to fail on the first try. As a last resort, --notest should help:
 # perlbrew --notest install perl-stable
@@ -674,18 +675,20 @@ cpan-outdated | cpanm
 # not all of these modules may actually be required - some might be in this list just because I need them on Cat or Pentland
 
 # some XS modules require additional packages for linking
+export DEBIAN_FRONTEND=noninteractive
 apt-get -y install libxml2-dev zlib1g-dev libxslt1-dev libssl-dev libmariadbclient-dev
-cpanm XML::LibXML XML::LibXSLT HTML::HTML5::Parser IO::Socket::SSL DBD::mysql || SETUPFAIL=22
+export DEBIAN_FRONTEND=
+cpanm $TESTING XML::LibXML XML::LibXSLT HTML::HTML5::Parser IO::Socket::SSL DBD::mysql || SETUPFAIL=22
+cpanm $TESTING CommonMark || SETUPFAIL=22
 
 # the pure Perl modules should be installed after the linked XS modules to make sure
 # that dependencies can be properly satisfied
-cpanm Module::Metadata Module::Install Devel::StackTrace Test::More Test::Exception Test::Warnings Text::Trim String::Random HTML::Entities DBI DBD::mysql || SETUPFAIL=23
-cpanm Mojolicious DateTime DateTime::Format::ISO8601 Time::Date Mojo::SMTP::Client Email::MessageID || SETUPFAIL=24
-cpanm String::Util List::MoreUtils Util::Any Digest::MD5 Mojolicious::Plugin::Authorization || SETUPFAIL=25
-cpanm Perl::Version SemVer Text::WordDiff || SETUPFAIL=26
-cpanm LWP::UserAgent REST::Client Cpanel::JSON::XS Try::Tiny URI || SETUPFAIL=27
-cpanm JSON::MaybeXS Regexp::Common || SETUPFAIL=27
-cpanm CommonMark || SETUPFAIL=27
+cpanm $TESTING Module::Metadata Module::Install Devel::StackTrace Test::More Test::Exception Test::Warnings Text::Trim String::Random HTML::Entities || SETUPFAIL=23
+cpanm $TESTING Mojolicious DateTime DateTime::Format::ISO8601 Time::Date Mojo::SMTP::Client Email::MessageID || SETUPFAIL=24
+cpanm $TESTING String::Util List::MoreUtils Util::Any Digest::MD5 Mojolicious::Plugin::Authorization || SETUPFAIL=25
+cpanm $TESTING Perl::Version SemVer Text::WordDiff || SETUPFAIL=26
+cpanm $TESTING LWP::UserAgent REST::Client Cpanel::JSON::XS Try::Tiny URI || SETUPFAIL=27
+cpanm $TESTING JSON::MaybeXS Regexp::Common || SETUPFAIL=27
 
 # Neo4j
 cpanm -n LWP::Protocol::https REST::Neo4p || SETUPFAIL=28
