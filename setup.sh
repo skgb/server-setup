@@ -19,13 +19,13 @@ pwd | grep -q "^$SETUPPATH$" || exit 1
 
 # make sure we have everything we need *before* starting the setup process
 # this is important because if we don't the script may fail and leave the system in an inconsistent state, creating a need to reinstall a fresh system all over again
-if [[ ! -e "$SETUPPATH/credentials.private" || ! -e "$SETUPPATH/backupkey.private" || ! -e "$SETUPPATH/clydebackup.tar" || ! -e "$SETUPPATH/clydesrv.tar.gz" ]]
+if [[ ! -e "$SETUPPATH/credentials.private" || ! -e "$SETUPPATH/backupkey.private" || ! -e "$SETUPPATH/clydebackup.tar" || ! -e "$SETUPPATH/clydesrv.tar" ]]
 then
   echo "Need:"
   echo "  credentials.private"
   echo "  backupkey.private"
   echo "  clydebackup.tar"
-  echo "  clydesrv.tar.gz"
+  echo "  clydesrv.tar"
   echo "Missing. Ends."
   exit 1
 fi
@@ -200,6 +200,12 @@ apt-get install neo4j
 #apt-get install neo4j=2.3.6
 #apt-mark hold neo4j
 setup_copy /etc/security/limits.d/neo4j R
+service neo4j stop
+# see <http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases>
+(cd /var/lib/neo4j/plugins ; wget http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.5.0.1/apoc-3.5.0.1-all.jar)
+setup_patch /etc/neo4j/neo4j.conf
+service neo4j start
+systemctl enable neo4j.service
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y install $(cat "$SETUPPATH/installed-software.log" | awk '{print $1}') || exit
@@ -223,6 +229,29 @@ setup_copy /etc/letsencrypt-inwx-cred 600
 echo "$SKGB_INWX_PASSWORD" >> /etc/letsencrypt-inwx-cred
 # possible alternative: <https://github.com/oGGy990/certbot-dns-inwx>
 
+# Wordpress CLI <https://wp-cli.org/>
+mkdir -p /opt/wp-cli
+cd /opt/wp-cli
+curl -LO https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+ln -s /opt/wp-cli/wp-cli.phar /usr/local/bin/wp
+mkdir -p /var/www/.wp-cli/cache
+chown -R www-data:www-data /var/www/.wp-cli
+
+# prep dirs
+cd /srv
+SRV_LIST_WP="www dev"
+SRV_LIST_INTERN="intern legacy"
+SRV_LIST_STATIC="archiv servo"
+SRV_LIST_FULL="$SRV_LIST_WP $SRV_LIST_INTERN $SRV_LIST_STATIC"
+mkdir $SRV_LIST_FULL
+chown git:git git
+chown www-data:www-data $SRV_LIST_WP
+chown aj:www-data $SRV_LIST_INTERN
+chown aj:skgb-web $SRV_LIST_STATIC
+chmod 2755 $SRV_LIST_FULL
+chmod 2775 $SRV_LIST_WP
+cd "$SETUPPATH"
 
 
 
@@ -252,7 +281,7 @@ EOF
 
 mysql <<EOF
 CREATE USER 'backup'@'localhost' IDENTIFIED BY '$MYSQL_BACKUP_PASSWORD';
-GRANT SELECT, SHOW DATABASES, LOCK TABLES, EVENT ON *.* TO 'backup'@'localhost';
+GRANT SELECT, SHOW DATABASES, LOCK TABLES ON *.* TO 'backup'@'localhost';
 CREATE USER 'skgb-intern'@'%' IDENTIFIED BY '$MYSQL_INTERN_PASSWORD';
 GRANT SELECT, INSERT, UPDATE, DELETE ON postfix.* TO 'skgb-intern'@'%';
 CREATE USER 'postfix'@'127.0.0.1' IDENTIFIED BY '$MYSQL_POSTFIX_PASSWORD';
@@ -293,8 +322,10 @@ setup_copy /root/.gnupg/otrust.txt 600
 gpg2 --import /root/.gnupg/*.asc
 gpg2 --import-ownertrust < /root/.gnupg/otrust.txt
 gpg2 --check-trustdb
+setup_copy /root/backupcredentials R
+sed -e "/^MYSQL_BACKUP_PASSWORD=.*/s//MYSQL_BACKUP_PASSWORD='--password=$MYSQL_BACKUP_PASSWORD'/" -i /root/backupcredentials
+sed -e "/^NEO4J_BACKUP_PASSWORD=.*/s//NEO4J_BACKUP_PASSWORD='$NEO4J_PASSWORD'/" -i /root/backupcredentials
 setup_copy /root/backupexport.sh X
-sed -e "/^MYSQL_BACKUP_PASSWORD=.*/s//MYSQL_BACKUP_PASSWORD='--password=$MYSQL_BACKUP_PASSWORD'/" -i /root/backupexport.sh
 setup_copy /root/backupimport.sh X
 setup_copy /root/backupoffsite.sh X
 setup_copy /root/backuprotate.conf R
@@ -310,10 +341,42 @@ setup_copy /etc/cron.hourly/backup X
 export NEO4J_PASSWORD="$NEO4J_PASSWORD"
 /root/backupimport.sh "$SETUPPATH/clydebackup.tar" -y || SETUPFAIL=1
 
-# the backup import will overwrite the password, in which case logrotate may start to send daily email complaints to root
-# (because of "error: 'Access denied for user 'debian-sys-maint'@'localhost' (using password: YES)'", which isn't given in the email though)
-# solution: read new password from /etc/mysql/debian.cnf and set that as the new password for debian-sys-maint in mysql, overwriting the imported backup
-#echo -n "MySQL Debian maintenance password:" ; MYSQL_DEBIAN_PASSWORD=$( echo $(awk -F "=" '/password/ {print $2}' /etc/mysql/debian.cnf ) | sed -e 's/ .*$//' ) && (echo " setting to '$MYSQL_DEBIAN_PASSWORD'"; echo "SET PASSWORD FOR 'debian-sys-maint'@'localhost' = PASSWORD('$MYSQL_DEBIAN_PASSWORD');" | mysql ) || echo ' password unchanged (error!)' && SETUPFAIL=2
+# The backup import has copied the skgb_web database content over to the
+# skgb_dev database to provide a current base point for further development.
+# We need to make some fixes to complete the transfer.
+apply_database_fix ()
+{
+	DB="$1"
+	DBUSER="$2"
+	DBPASS="$3"
+	HOST="$4"
+	NAME="$5"
+	
+	echo
+	echo "USE ${DB}"
+	( mysql --user="$DBUSER" --password="$DBPASS" --host=localhost --database="$DB" | expand -t 15 ) <<QUIT
+
+# apply the important fixes
+UPDATE skgb_options SET option_value = '${HOST}' WHERE option_name = 'siteurl';
+UPDATE skgb_options SET option_value = '${HOST}' WHERE option_name = 'home';
+
+# set the site's display name
+# (to make the two installations easier distiguishable from each other)
+UPDATE skgb_options SET option_value = '${NAME}' WHERE option_name = 'blogname';
+
+# some features depend upon other settings (that remain constant)
+UPDATE skgb_options SET option_value = 'uploads' WHERE option_name = 'upload_path';
+UPDATE skgb_options SET option_value = '' WHERE option_name = 'upload_url_path';
+UPDATE skgb_options SET option_value = '1' WHERE option_name = 'uploads_use_yearmonth_folders';
+
+# we're done changing the database, so let's print a confirmation table
+SELECT option_name, option_value FROM skgb_options WHERE option_name IN ('siteurl', 'home', 'blogname', 'upload_path') ORDER BY option_value;
+
+QUIT
+}
+#                  DB       DBUSER   DBPASS                   HOST                NAME
+apply_database_fix skgb_dev skgb-dev "$MYSQL_WP_DEV_PASSWORD" http://dev.skgb.de  "SKGB-Web Dev"
+
 mysqladmin flush-privileges
 
 # the backup import will overwrite the MTA's virtual alias table
@@ -351,6 +414,7 @@ setup_copy /etc/cron.daily/letsencrypt-skgb X
 
 ### Apache
 
+apachectl graceful-stop
 APACHE_DIR=/etc/apache2
 
 for user in `awk -F':' '/^skgb-web/{print $4}' /etc/group | sed -e 's/,/ /g'`
@@ -408,22 +472,59 @@ setup_copy "$APACHE_DIR/sites-available/000-Default.conf" R
 setup_copy "$APACHE_DIR/sites-available/000-Default.include" R
 a2ensite 000-Default
 
-setup_copy "$APACHE_DIR/sites-available/archiv.conf" R
-a2ensite archiv
-setup_copy "$APACHE_DIR/sites-available/intern.conf" R
-a2ensite intern
-setup_copy "$APACHE_DIR/sites-available/intern1.conf" R
-a2ensite intern1
-setup_copy "$APACHE_DIR/sites-available/servo.conf" R
-setup_copy "$APACHE_DIR/sites-available/servo.include" R
-a2ensite servo
-setup_copy "$APACHE_DIR/sites-available/skgb.conf" R
-a2ensite skgb
-setup_copy "$APACHE_DIR/sites-available/www.conf" R
-a2ensite www
+setup_wordpress () {
+  sudo -u www-data -- wp "--path=$1" core download --locale=de_DE
+  WP_CONFIG="wp-config_${1}.php"
+  tar -xvf "$BACKUPSRVPATH" "$1/$WP_CONFIG"
+  ln -s "$WP_CONFIG" "$1/wp-config.php"
+  WP_HTACCESS="htaccess_${1}.conf"
+  setup_copy "/srv/$1/$WP_HTACCESS" R
+  #tar -xf "$BACKUPSRVPATH" "$1/$WP_HTACCESS"
+  ln -s "$WP_HTACCESS" "$1/.htaccess"
+  
+  # these git commands have some filesystem permission issue when run as user aj...
+  git -C "$1/wp-content/plugins" clone https://github.com/skgb/wordpress-plugin.git skgb-web
+  sudo -u www-data -- wp "--path=$1" plugin install https://littoral.michelf.ca/code/php-markdown/php-markdown-extra-1.2.8.zip --activate
+  sudo -u www-data -- wp "--path=$1" plugin install https://github.com/johannessen/bhcalendarchives/archive/master.zip --activate
+  sudo -u www-data -- wp "--path=$1" plugin install remove-generator-tag-for-wordpress
+  sudo -u www-data -- wp "--path=$1" plugin install pjw-page-excerpt
+  sudo -u www-data -- wp "--path=$1" plugin install wp-db-backup
+  sudo -u www-data -- wp "--path=$1" plugin uninstall akismet
+  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme-4.git skgb4
+  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme-5.git skgb5
+  sudo -u www-data -- wp "--path=$1" theme install twentyten
+  sudo -u www-data -- wp "--path=$1" theme activate skgb5
+}
 
-echo "Installing /srv ..."
-( cd /srv ; tar -xzf "$SETUPPATH/clydesrv.tar.gz" )
+BACKUPSRVPATH=/srv/clydesrv.tar
+ln -s "$SETUPPATH/clydesrv.tar" "$BACKUPSRVPATH"
+cd /srv
+
+echo "Installing Wordpress into /srv/www ..."
+tar -xf "$BACKUPSRVPATH" www/XML www/uploads
+setup_wordpress www
+
+echo "Installing Wordpress into /srv/dev ..."
+echo
+echo "(There might be lots of warnings below; these are generally harmless.)"
+echo
+cp -R www/XML dev/XML
+cp -R www/uploads dev/uploads
+setup_wordpress dev
+setup_copy /srv/dev/robots.txt R
+echo
+echo "(There might be lots of warnings above; these are generally harmless.)"
+echo
+
+chmod -R g+w $SRV_LIST_WP
+rm -f /var/www/.wp-cli/cache/core/wordpress-*.tar.gz /var/www/.wp-cli/cache/plugin/*.zip
+
+echo "Installing /srv/archiv and /srv/servo ..."
+#sudo -u aj -- git clone https://github.com/skgb/web-static.git archiv
+tar -xf "$BACKUPSRVPATH" archiv servo
+
+echo "Installing git repository into /srv/git ..."
+tar -xf "$BACKUPSRVPATH" git
 
 # TODO: make sure that the ownership is correct:
 # Data needs OWNER www-data
@@ -435,15 +536,44 @@ chmod 600 /srv/Data/*
 #chgrp -R www-data /srv/Default
 # (historically, skgb-web is equivalent)
 
-apachectl graceful-stop
+setup_copy "$APACHE_DIR/sites-available/archiv.conf" R
+a2ensite archiv
+setup_copy "$APACHE_DIR/sites-available/servo.conf" R
+setup_copy "$APACHE_DIR/sites-available/servo.include" R
+a2ensite servo
+setup_copy "$APACHE_DIR/sites-available/skgb.conf" R
+a2ensite skgb
+setup_copy "$APACHE_DIR/sites-available/www.conf" R
+a2ensite www
+
 apachectl configtest
 apachectl start
 
 
 
-# Install LOMS Service
+# Install SKGB-intern
 # (Don't enable yet: We need to brew Perl first.)
 setup_copy /etc/init.d/skgb-intern.sh X
+
+echo "Installing SKGB-intern into /srv/intern and /srv/legacy ..."
+sudo -u aj -- git clone https://github.com/skgb/intern.git
+tar -xf "$BACKUPSRVPATH" intern/skgb-intern.production.conf
+tar -xf "$BACKUPSRVPATH" intern/public/Merkblatt\ Datenschutz.pdf
+tar -xf "$BACKUPSRVPATH" intern/public/regeln/src-copy
+tar -xf "$BACKUPSRVPATH" intern/public/lib
+# see https://github.com/oetiker/mojolicious-plugin-reverseproxy/issues/5
+tar -xvf "$BACKUPSRVPATH" intern/lib/Mojolicious/Plugin/ReverseProxy.pm
+
+tar -xf "$BACKUPSRVPATH" legacy
+rm "$BACKUPSRVPATH"
+
+setup_copy "$APACHE_DIR/sites-available/intern.conf" R
+a2ensite intern
+setup_copy "$APACHE_DIR/sites-available/intern1.conf" R
+a2ensite intern1
+
+apachectl configtest
+apachectl graceful
 
 
 
@@ -559,6 +689,7 @@ cpanm CommonMark || SETUPFAIL=27
 
 # Neo4j
 cpanm -n LWP::Protocol::https REST::Neo4p || SETUPFAIL=28
+cpanm Neo4j::Driver || SETUPFAIL=28
 
 # NOT currently used on Clyde: proj
 #apt-get -y install libproj-dev

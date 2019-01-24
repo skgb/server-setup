@@ -8,12 +8,9 @@
 
 BACKUPDIR=/root/backups
 BACKUPFILE=clydebackup.tar
-BACKUPKEYS='-r 75EB52B0 -r 260EC33C'  # Arne + SKGB Automated Backups
 BACKUPSRVFILE=clydesrv.tar
-#BACKUPMYSQLDBS='skgb_intern skgb_web db10959533-wordpressdev'
-BACKUPMYSQLDBS='postfix skgb_web'
 
-MYSQL_BACKUP_PASSWORD=
+. /root/backupcredentials
 
 
 mkdir -p "$BACKUPDIR"
@@ -47,14 +44,13 @@ bzip2 -c cata.log > cata.log.bz2
 tar -rf "$BACKUPFILE" cata.log.bz2
 rm -f cata.log cata.log.bz2
 
+
+
 # do a mysql dump
-#--all-databases
-eval mysqldump --user=backup $MYSQL_BACKUP_PASSWORD --events --no-data --databases $BACKUPMYSQLDBS | bzip2 > mysqlstructure.sql.bz2
-eval mysqldump --user=backup $MYSQL_BACKUP_PASSWORD --events --no-create-info --databases $BACKUPMYSQLDBS | bzip2 > mysqldata.sql.bz2
-# (--events is just used to suppress a useless warning message; we don't actually use events. Also, the events privilege needs to be enabled for the backup mysql user for this hack to work.)
-tar -rf "$BACKUPFILE" mysqlstructure.sql.bz2
-tar -cf databases.tar mysqldata.sql.bz2
-rm -f mysqlstructure.sql.bz2 mysqldata.sql.bz2
+mysqldump --user=backup $MYSQL_BACKUP_PASSWORD postfix | bzip2 > mysql_postfix.sql.bz2
+mysqldump --user=backup $MYSQL_BACKUP_PASSWORD skgb_web | bzip2 > mysql_skgb_web.sql.bz2
+tar -cf databases.tar mysql_postfix.sql.bz2 mysql_skgb_web.sql.bz2
+rm -f mysql_postfix.sql.bz2 mysql_skgb_web.sql.bz2
 
 # red-legacy db
 cd /srv
@@ -68,14 +64,15 @@ then
 	neo4j-shell -readonly -c dump | bzip2 > neo4jfulldump.cypher.bz2
 	tar -rf databases.tar neo4jfulldump.cypher.bz2
 else
-	# Neo4j 3
-	NEO4JDUMPDIR=`sudo -u neo4j mktemp -dt neo4jdump.XXXXXX` || exit 1
-	ulimit -n 60000
-	sudo -u neo4j neo4j-admin dump --to="$NEO4JDUMPDIR/graph.db.dump"
-	mv "$NEO4JDUMPDIR/graph.db.dump" .
-	tar -rf databases.tar graph.db.dump
-	rm -Rf "$NEO4JDUMPDIR"
-	# possible alternative: APOC, see <https://neo4j.com/developer/kb/export-sub-graph-to-cypher-and-import/>
+  # Neo4j 3
+  NEO4JDUMPDIR=`sudo -u neo4j mktemp -dt neo4jdump.XXXXXX` || exit 1
+  export NEO4J_USERNAME=neo4j
+  export NEO4J_PASSWORD="$NEO4J_BACKUP_PASSWORD"
+  cypher-shell --format plain "CALL apoc.export.cypher.all('$NEO4JDUMPDIR/neo4j3fulldump.cypher',{format:'cypher-shell'});" > /dev/null
+  mv "$NEO4JDUMPDIR/neo4j3fulldump.cypher" .
+  bzip2 neo4j3fulldump.cypher
+  tar -rf databases.tar neo4j3fulldump.cypher.bz2
+  rm -Rf "$NEO4JDUMPDIR" neo4j3fulldump.cypher.bz2
 fi
 
 # copy the virtual alias table
@@ -122,19 +119,36 @@ rm -Rf credentials.private.orig le-archive le-accounts le-renewal serverconfig.t
 
 
 
+# clydesrv.tar
 # this is basically for volatile / transient data only
 
-# include non-transient data like apache document roots? -> NO!, these are pulled from outside sources like repositories by the setup routines (should be, anyway - TODO)
+tar_append () {
+  if [ -e "$2" ]
+  then 
+    tar -rf "$1" "$2"
+  fi
+}
+
+tar -cf "$BACKUPSRVFILE" "backuptimestamp"
 cd /srv
-tar -cf "$BACKUPDIR/$BACKUPSRVFILE" --exclude=Data --warning=no-file-changed *
+#tar -cf "$BACKUPDIR/$BACKUPSRVFILE" --exclude=Data --warning=no-file-changed *
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" dev/wp-config_dev.php
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" dev/htaccess_dev.conf
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" www/wp-config_www.php
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" www/htaccess_www.conf
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" www/XML
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" www/uploads
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" servo
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" archiv
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/skgb-intern.production.conf
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/Merkblatt\ Datenschutz.pdf
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/regeln/src-copy
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/lib
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/lib/Mojolicious/Plugin/ReverseProxy.pm
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" legacy
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" git
+
+
+
 cd "$BACKUPDIR"
-# ./.
-# how about stuff that may be sloppily changed on Clyde only, but not in the rep? 
-
-# - data that is non-transient, but not part of any repository?
-# - any data that's usually changed on the server only?
-# - other transient data?
-
-
-
 rm -f backuptimestamp

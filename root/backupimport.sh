@@ -52,8 +52,14 @@ fi
 
 
 
-bunzip2 -c mysqlstructure.sql.bz2 | mysql --user=root
-bunzip2 -c mysqldata.sql.bz2 | mysql --user=root
+mysql <<EOF
+CREATE DATABASE IF NOT EXISTS postfix DEFAULT CHARACTER SET ascii;
+CREATE DATABASE IF NOT EXISTS skgb_web DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS skgb_dev DEFAULT CHARACTER SET utf8mb4;
+EOF
+bunzip2 -c mysql_postfix.sql.bz2 | mysql --user=root postfix
+bunzip2 -c mysql_skgb_web.sql.bz2 | mysql --user=root skgb_web
+bunzip2 -c mysql_skgb_web.sql.bz2 | mysql --user=root skgb_dev
 mysqladmin flush-privileges
 
 mv -v postfix-virtual /etc/postfix/virtual
@@ -61,7 +67,11 @@ mv -v postfix-virtual /etc/postfix/virtual
 
 echo "Cleaning Neo4j database:"
 cypher-shell -u neo4j --format verbose 'MATCH (n) DETACH DELETE n;'
-if [ -f neo4jfulldump.cypher.bz2 ] ; then
+if [ -f neo4j3fulldump.cypher.bz2 ] ; then
+	bunzip2 neo4j3fulldump.cypher.bz2
+	cp neo4j3fulldump.cypher /root
+	cypher-shell -u neo4j --format verbose < neo4j3fulldump.cypher
+elif [ -f neo4jfulldump.cypher.bz2 ] ; then
 	bunzip2 neo4jfulldump.cypher.bz2
 	if [ `du -b neo4jfulldump.cypher | cut -f1` -ne 15 ] ; then
 		# Importing this will cause an "Unknown command ;" error if the dump happens to be empty. As of neo4j 2.3.3, empty dumps have a size of 15 bytes, exactly.

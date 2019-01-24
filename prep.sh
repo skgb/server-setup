@@ -35,4 +35,4 @@ tar -rLvf "$SETUPFILE" "$SETUPROOT/hostkeys.sh"
 # cd /root
 # tar -xf clydesetup.tar --no-same-owner --no-same-permissions
 # mv clydebackup.tar clydesetup
-# mv clydesrv.tar.gz clydesetup
+# mv clydesrv.tar clydesetup

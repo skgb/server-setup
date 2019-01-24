@@ -1,0 +1,9 @@
+--- /etc/neo4j/neo4j.conf	2019-01-21 01:00:00.000000000 +0100
++++ /etc/neo4j/neo4j.conf	2019-01-24 10:00:00.000000000 +0100
+@@ -273,4 +273,6 @@
+ # full access to the database through unsupported/insecure internal APIs.
+ #dbms.security.procedures.unrestricted=my.extensions.example,my.procedures.*
++dbms.security.procedures.unrestricted=apoc.export.cypher.all
++apoc.export.file.enabled=true
+ 
+ # A comma separated list of procedures to be loaded by default.

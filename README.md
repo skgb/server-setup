@@ -58,7 +58,7 @@ Setup des Servers
 	  (`/root/.gnupg/EF330646-sec.asc`)
 	- die Passphrase für diesen Schlüssel
 	- `clydebackup.tar` – Backup der Datenbanken etc.
-	- `clydesrv.tar.gz` – Backup von `/srv`
+	- `clydesrv.tar` – Backup der Server-Files von `/srv`
 
 1.	Sicherstellen, dass gerade keine Nutzer auf dem Server arbeiten.
 	Server im Control Panel stoppen (`Steuerung` → `Erzwungen abschalten`), neues
@@ -92,7 +92,7 @@ Setup des Servers
 	`/root/clydesetup` kopieren:
 	```bash
 	scp clydebackup.tar root@solent.skgb.de:clydesetup
-	scp clydesrv.tar.gz root@solent.skgb.de:clydesetup
+	scp clydesrv.tar root@solent.skgb.de:clydesetup
 	
 	```
 
