@@ -28,14 +28,22 @@ dpkg-query -l | sed -e '1,5d' -e 's/^... //g' -e 's/ \+/ /g' -e 's/^\([^ ]* [^ ]
 tar -rf "$BACKUPFILE" installed-versions.log
 rm -f installed-versions.log
 
-#perldoc -oText perllocal 2>&1 | grep '"Module"\|VERSION\|install \|"perllocal"' > installed-modules.log
-#for M in `perldoc -t perllocal | grep '"Module"' | sed -e 's/^.*" //'`
-#do
-#	V=`perldoc -t perllocal | awk "/$M/{y=1;next}y" | grep VERSION | head -n 1`
-#	echo "$M $V"
-#done | sort -b > installed-modules.log
-#tar -rf catbackup.tar installed-modules.log
-#rm -f installed-modules.log
+# Perl installed module versions list
+# (to help track incompatibilities after updates)
+#perldoc -oText perllocal 2>&1 | grep '"Module"\|VERSION\|install \|"perllocal"' > installed-perl.log
+export PERLBREW_ROOT=/opt/perlbrew
+export PERLBREW_HOME=/root/.perlbrew
+source ${PERLBREW_ROOT}/etc/bashrc
+perlbrew use > installed-perl.log
+/usr/bin/env perldoc -t perllocal > perllocal.log
+for M in `grep '"Module"' perllocal.log | sed -e 's/^.*" //'`
+do
+  V=`awk "/$M/{y=1;next}y" < perllocal.log | grep VERSION | head -n 1`
+  echo "$M $V"
+done | sort -b >> installed-perl.log
+bzip2 -c installed-perl.log > installed-perl.log.bz2
+tar -rf "$BACKUPFILE" installed-perl.log.bz2
+rm -f installed-perl.log installed-perl.log.bz2 perllocal.log
 
 # file catalogue
 # we don't usually need this either, but it may come in very handy in case of catastrophic failure
