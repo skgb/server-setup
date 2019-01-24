@@ -47,7 +47,7 @@ rm -f installed-perl.log installed-perl.log.bz2 perllocal.log
 
 # file catalogue
 # we don't usually need this either, but it may come in very handy in case of catastrophic failure
-find / | grep -v '^/boot/\|^/dev/\|^/sys/\|^/proc/\|^/root/\.cpan/' &> cata.log
+(find / | grep -v '^/boot/\|^/dev/\|^/sys/\|^/proc/\|^/root/\.cpanm\?/\|^/opt/perlbrew/build/') &> cata.log
 bzip2 -c cata.log > cata.log.bz2
 tar -rf "$BACKUPFILE" cata.log.bz2
 rm -f cata.log cata.log.bz2

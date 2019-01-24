@@ -54,7 +54,7 @@ letsencrypt-inwx delete -c /etc/letsencrypt-inwx-cred -d _acme-challenge-test.sk
 # Apache are configured to use the paths for 'skgb.de', you will need to
 # clean this up manually if you're not careful. Probably the best way to
 # avoid this is to clear /etc/letsencrypt completely before requesting the
-# new certificate. That way, the paths should en up being as expected, and
+# new certificate. That way, the paths should end up being as expected, and
 # if you're switching away from the existing certificates you won't actually
 # be needing any of the old files.
 # The command `certbot certificates` may help you debug this situation.

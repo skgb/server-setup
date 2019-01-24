@@ -53,9 +53,7 @@ Setup des Servers
 	ist keine Lösung). Benötigt wird folgendes:
 	- `clydesetup.tar` – Export dieses Repositories
 	- `credentials.private` – Passwörter für Serverdienste etc.
-	  (`/root/clydesetup/setup.private`)
 	- `backupkey.private` – privater PGP-Schlüssel für `clydebackup.tar`
-	  (`/root/.gnupg/EF330646-sec.asc`)
 	- die Passphrase für diesen Schlüssel
 	- `clydebackup.tar` – Backup der Datenbanken etc.
 	- `clydesrv.tar` – Backup der Server-Files von `/srv`
@@ -64,6 +62,10 @@ Setup des Servers
 	Server im Control Panel stoppen (`Steuerung` → `Erzwungen abschalten`), neues
 	Image aufspielen (`Medien` → `Images` → `Debian 9` → `Minimal` → `große
 	Partition`).
+	
+	*Keine* E-Mail bestellen (sie enthielte das `root`-Passwort).
+	Das geforderte "SCP Login Passwort" ist das vom Server Control Panel
+	und *nicht* das SSH-`root`-Passwort.
 	
 	*Dauer: ca. 4 Min.*
 
@@ -82,6 +84,9 @@ Setup des Servers
 
 1.	Export dieses Repositories in `/root/clydesetup` anlegen:
 	```bash
+	scp clydesetup.tar root@solent.skgb.de:
+	
+	# auf Solent
 	cd /root
 	tar -xf clydesetup.tar --no-same-owner --no-same-permissions
 	rm clydesetup.tar
@@ -91,6 +96,8 @@ Setup des Servers
 	Außerdem die unter 1. gelisteten weiteren Dateien nach
 	`/root/clydesetup` kopieren:
 	```bash
+	scp credentials.private root@solent.skgb.de:clydesetup
+	scp backupkey.private root@solent.skgb.de:clydesetup
 	scp clydebackup.tar root@solent.skgb.de:clydesetup
 	scp clydesrv.tar root@solent.skgb.de:clydesetup
 	
@@ -121,13 +128,17 @@ Setup des Servers
 	- Passphrase des Backup-Schlüssels eingeben *(etwa 2 Min. nach Start)*
 
 1.	Server kalt neustarten (ausloggen, im Control Panel `Steuerung` →
-	`poweroff` + `start`). Der kalte Neustart wird [angeblich](http://www.netcup-wiki.de/wiki/Zus%C3%A4tzliche_IP_Adresse_konfigurieren#IPv6)
+	`Erzwungen abschalten` + `Starten`). Der kalte Neustart wird [angeblich](http://www.netcup-wiki.de/wiki/Zus%C3%A4tzliche_IP_Adresse_konfigurieren#IPv6)
 	benötigt, um sicherzustellen, dass IPv6 funktioniert.
 
 1.	Fertig.
 	
 	Keine Fehler aufgetreten? Puuh … dann jetzt Server neu starten
 	und **gründlich testen!**
+	
+	Nach der Neuinstallation ist das Wordpress erst mal im Wartungsmodus.
+	Um den zu beenden, einfach in `/srv/www/htaccess_www.conf` die 503er
+	Redirects auskommentieren.
 
 1.	Anmelden als normaler User über SSH. **SKGB-intern 2 manuell
 	starten** (die Automatik funktioniert noch nicht):

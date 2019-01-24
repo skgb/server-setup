@@ -29,6 +29,7 @@ tar -rLvf "$SETUPFILE" "$SETUPROOT/installed-software.log"
 tar -rLvf "$SETUPFILE" "$SETUPROOT/README.md"
 tar -rLvf "$SETUPFILE" "$SETUPROOT/hostkeys.sh"
 
+echo "Prepared '`basename $SETUPFILE`'."
 
 # manually on server:
 

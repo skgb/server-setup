@@ -319,7 +319,9 @@ setup_repo_permissions /root/.gnupg/260EC33C-sec.asc 600
 setup_copy /root/.gnupg/75EB52B0.asc 600
 setup_copy /root/.gnupg/816EE403.asc 600
 setup_copy /root/.gnupg/otrust.txt 600
-gpg2 --import /root/.gnupg/*.asc
+gpg2 --batch --import /root/.gnupg/*.asc
+# note: in case of error "error sending to agent":
+#gpgconf --kill gpg-agent ; gpgconf --launch gpg-agent
 gpg2 --import-ownertrust < /root/.gnupg/otrust.txt
 gpg2 --check-trustdb
 setup_copy /root/backupcredentials R
@@ -413,6 +415,9 @@ setup_copy /etc/cron.daily/letsencrypt-skgb X
 
 
 ### Apache
+echo
+echo "We will now install /srv files and configure Apache."
+echo
 
 apachectl graceful-stop
 APACHE_DIR=/etc/apache2
