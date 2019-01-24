@@ -70,6 +70,7 @@ then
 else
 	# Neo4j 3
 	NEO4JDUMPDIR=`sudo -u neo4j mktemp -dt neo4jdump.XXXXXX` || exit 1
+	ulimit -n 60000
 	sudo -u neo4j neo4j-admin dump --to="$NEO4JDUMPDIR/graph.db.dump"
 	mv "$NEO4JDUMPDIR/graph.db.dump" .
 	tar -rf databases.tar graph.db.dump

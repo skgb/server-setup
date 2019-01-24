@@ -52,7 +52,7 @@ Setup des Servers
 	über einen lahmen Telekom-ADSL-Upstream hochgeladen werden soll,
 	ist keine Lösung). Benötigt wird folgendes:
 	- `clydesetup.tar` – Export dieses Repositories
-	- `setup.private` – Passwörter für Serverdienste etc.
+	- `credentials.private` – Passwörter für Serverdienste etc.
 	  (`/root/clydesetup/setup.private`)
 	- `backupkey.private` – privater PGP-Schlüssel für `clydebackup.tar`
 	  (`/root/.gnupg/EF330646-sec.asc`)

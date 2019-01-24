@@ -23,6 +23,7 @@ tar -cLvf "$SETUPFILE" "$SETUPROOT/setup.sh"
 
 tar -rLvf "$SETUPFILE" --exclude .DS_Store "$SETUPROOT/etc"
 tar -rLvf "$SETUPFILE" --exclude .DS_Store "$SETUPROOT/root"
+tar -rLvf "$SETUPFILE" --exclude .DS_Store "$SETUPROOT/srv"
 tar -rLvf "$SETUPFILE" "$SETUPROOT/installed-software.log"
 
 tar -rLvf "$SETUPFILE" "$SETUPROOT/README.md"

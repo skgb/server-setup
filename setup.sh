@@ -202,7 +202,7 @@ apt-get install neo4j
 setup_copy /etc/security/limits.d/neo4j R
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y install $(cat installed-software.log | awk '{print $1}') || exit
+apt-get -y install $(cat "$SETUPPATH/installed-software.log" | awk '{print $1}') || exit
 export DEBIAN_FRONTEND=
 
 # see https://www.bsi.bund.de/DE/Themen/Cyber-Sicherheit/Aktivitaeten/CERT-Bund/CERT-Reports/HOWTOs/Offene-Portmapper-Dienste/Offene-Portmapper-Dienste_node.html
@@ -393,18 +393,19 @@ a2enmod autoindex
 a2enmod env
 a2enmod mime
 a2enmod negotiation
-a2enmod php5
+a2enmod php7.0
 a2enmod ssl
 
 setup_copy "$APACHE_DIR/conf-available/ssl.conf" R
 a2enconf ssl
 setup_copy /etc/cron.daily/apachessl X
-setup_copy /etc/php5/apache2/conf.d/skgb-intern.php.ini R
+setup_copy /etc/php/7.0/apache2/conf.d/skgb-intern.php.ini R
 
-setup_copy /srv/Default/index.shtml R
+setup_copy /srv/Default/index.ascii.shtml R
 a2dissite 000-default
 mv "$APACHE_DIR/sites-available/000-default.conf" "$APACHE_DIR/sites-available/000-default.conf.orig"  # HFS compatibility
 setup_copy "$APACHE_DIR/sites-available/000-Default.conf" R
+setup_copy "$APACHE_DIR/sites-available/000-Default.include" R
 a2ensite 000-Default
 
 setup_copy "$APACHE_DIR/sites-available/archiv.conf" R
@@ -414,6 +415,7 @@ a2ensite intern
 setup_copy "$APACHE_DIR/sites-available/intern1.conf" R
 a2ensite intern1
 setup_copy "$APACHE_DIR/sites-available/servo.conf" R
+setup_copy "$APACHE_DIR/sites-available/servo.include" R
 a2ensite servo
 setup_copy "$APACHE_DIR/sites-available/skgb.conf" R
 a2ensite skgb

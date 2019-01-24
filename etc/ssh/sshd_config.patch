@@ -1,15 +1,14 @@
 --- /etc/ssh/sshd_config	2016-08-04 08:00:00.000000000 +0200
 +++ /etc/ssh/sshd_config	2018-12-31 15:37:34.000000000 +0100
-@@ -30,6 +30,6 @@
+@@ -30,5 +30,6 @@
  
  #LoginGraceTime 2m
--#PermitRootLogin prohibit-password
 -PermitRootLogin yes
 +PermitRootLogin prohibit-password
 +#PermitRootLogin yes
  #StrictModes yes
  #MaxAuthTries 6
-@@ -112,5 +112,5 @@
+@@ -111,5 +112,5 @@
  
  # Allow client to pass locale environment variables
 -AcceptEnv LANG LC_*
