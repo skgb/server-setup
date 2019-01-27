@@ -468,6 +468,7 @@ a2enmod ssl
 setup_copy "$APACHE_DIR/conf-available/ssl.conf" R
 a2enconf ssl
 setup_copy /etc/cron.daily/apachessl X
+setup_copy "$APACHE_DIR/sites-available/ssl-wildcard.include" R
 setup_copy /etc/php/7.0/apache2/conf.d/skgb-intern.php.ini R
 
 setup_copy /srv/Default/index.ascii.shtml R
