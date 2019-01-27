@@ -20,6 +20,7 @@ joe							install
 less						install
 lshw						install
 make						install
+monit						install
 mysql-client				install
 mysql-server				install
 openssl						install

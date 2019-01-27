@@ -15,8 +15,6 @@
 - port 3000 sperren -> kann Mojo statt auf 0.0.0.0 auf 127.0.0.1 gebunden werden?
 <https://www.google.de/search?q=bind+mojolicious+to+ip>
 
-- monit ins repo: Ulf weiß die Details nicht mehr
-
 - joe: /etc/joe/joerc
 
 - email -> möglichst extern, zb Mailbox.org als MX

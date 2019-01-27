@@ -597,6 +597,18 @@ setup_copy /etc/network/interfaces.d/ip6 R
 
 
 
+### Monit
+setup_patch /etc/monit/monitrc
+setup_copy /etc/monit/conf.d/monit-http 0600
+ln -s ../conf-available/apache2 /etc/monit/conf-enabled/apache2
+ln -s ../conf-available/cron /etc/monit/conf-enabled/cron
+ln -s ../conf-available/mysql /etc/monit/conf-enabled/mysql
+ln -s ../conf-available/postfix /etc/monit/conf-enabled/postfix
+ln -s ../conf-available/rsyslog /etc/monit/conf-enabled/rsyslog
+systemctl restart monit.service
+
+
+
 ### CommonMark
 
 #apt-get install cmark libcmark-dev
