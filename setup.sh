@@ -553,6 +553,8 @@ a2ensite servo
 setup_copy "$APACHE_DIR/sites-available/skgb.conf" R
 a2ensite skgb
 setup_copy "$APACHE_DIR/sites-available/www.conf" R
+setup_copy "$APACHE_DIR/sites-available/www.include" R
+setup_copy "$APACHE_DIR/sites-available/wwwdev.include" R
 a2ensite www
 
 apachectl configtest

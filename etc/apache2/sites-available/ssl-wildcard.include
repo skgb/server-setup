@@ -106,6 +106,16 @@ SSLCertificateKeyFile  /etc/ssl/skgb/privkey.pem
 #		nokeepalive ssl-unclean-shutdown \
 #		downgrade-1.0 force-response-1.0
 
+# only .htaccess and dir contexts, unusable for rproxy
+#SSLRequireSSL
+
+# HSTS (mod_headers is required) (15768000 seconds = 6 months)
+#Header always set Strict-Transport-Security "max-age=360"
+
+# openssl req -new -x509 -days 365 -nodes -out intern2.crt.pem -keyout intern2.key.pem
+# openssl req -new -newkey rsa:2048 -utf8 -nodes -out intern2.csr.pem -keyout intern2.key.pem
+# (CN=FQDN ist das einzige, was CACert verwendet!)
+
 
 
 
