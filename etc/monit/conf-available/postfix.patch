@@ -1,0 +1,14 @@
+--- /etc/monit/postfix	2017-01-11 14:48:00.000000000 +0100
++++ /etc/monit/postfix	2019-01-29 22:40:00.000000000 +0100
+@@ -5,2 +5,2 @@
+-   start program = "/etc/init.d/postfix start"
+-   stop  program = "/etc/init.d/postfix stop"
++   start program = "/usr/sbin/postfix start"
++   stop  program = "/usr/sbin/postfix stop"
+@@ -9 +8,0 @@
+-   depend master_bin
+@@ -16,4 +14,0 @@
+- check file master_bin with path /usr/lib/postfix/master
+-   group postfix
+-   include /etc/monit/templates/rootbin
+-

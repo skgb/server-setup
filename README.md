@@ -139,13 +139,8 @@ Setup des Servers
 	Nach der Neuinstallation ist das Wordpress erst mal im Wartungsmodus.
 	Um den zu beenden, einfach in `/srv/www/htaccess_www.conf` die 503er
 	Redirects auskommentieren.
-
-1.	Anmelden als normaler User über SSH. **SKGB-intern 2 manuell
-	starten** (die Automatik funktioniert noch nicht):
-	```bash
-	sudo /etc/init.d/skgb-intern.sh start
 	
-	```
+	SKGB-intern sollte ab jetzt automatisch starten.
 
 
 

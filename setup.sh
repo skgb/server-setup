@@ -306,8 +306,19 @@ setup_copy /etc/aliases R
 setup_copy /etc/postfix/virtual R
 newaliases
 postmap hash:/etc/postfix/virtual
-postfix status && postfix reload || postfix start
 setup_copy /etc/postfix/reload X
+
+# Apparently systemd doesn't work well with postfix in Debian 9; see:
+# https://serverfault.com/q/877626
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877992
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=882141
+# Let's just use monit to start postfix, avoiding all these pitfalls.
+# Unfortunately, the default monit control file for postfix is also broken ... so let's fix it.
+setup_patch /etc/monit/conf-available/postfix
+service postfix stop
+systemctl disable postfix.service
+systemctl disable postfix@-.service
+postfix start
 
 
 
@@ -563,8 +574,9 @@ apachectl start
 
 
 # Install SKGB-intern
-# (Don't enable yet: We need to brew Perl first.)
+
 setup_copy /etc/init.d/skgb-intern.sh X
+systemctl disable skgb-intern.service
 
 echo "Installing SKGB-intern into /srv/intern and /srv/legacy ..."
 sudo -u aj -- git clone https://github.com/skgb/intern.git
@@ -600,18 +612,6 @@ setup_copy /etc/network/interfaces.d/ip6 R
 #setup_copy /etc/bind/skgb.de R
 #/etc/init.d/bind9 reload
 #setup_copy /etc/bind/reload X
-
-
-
-### Monit
-setup_patch /etc/monit/monitrc
-setup_copy /etc/monit/conf.d/monit-http 0600
-ln -s ../conf-available/apache2 /etc/monit/conf-enabled/apache2
-ln -s ../conf-available/cron /etc/monit/conf-enabled/cron
-ln -s ../conf-available/mysql /etc/monit/conf-enabled/mysql
-ln -s ../conf-available/postfix /etc/monit/conf-enabled/postfix
-ln -s ../conf-available/rsyslog /etc/monit/conf-enabled/rsyslog
-systemctl restart monit.service
 
 
 
@@ -734,9 +734,22 @@ echo
 
 
 
+### Monit
+setup_patch /etc/monit/monitrc
+setup_copy /etc/monit/conf.d/monit-http 0600
+setup_copy /etc/monit/conf-enabled/neo4j 0600
+setup_copy /etc/monit/conf-enabled/skgb-intern 0600
+ln -s ../conf-available/apache2 /etc/monit/conf-enabled/apache2
+ln -s ../conf-available/cron /etc/monit/conf-enabled/cron
+ln -s ../conf-available/mysql /etc/monit/conf-enabled/mysql
+ln -s ../conf-available/mysql /etc/monit/conf-enabled/neo4j
+ln -s ../conf-available/postfix /etc/monit/conf-enabled/postfix
+ln -s ../conf-available/rsyslog /etc/monit/conf-enabled/rsyslog
+ln -s ../conf-available/skgb-intern /etc/monit/conf-enabled/skgb-intern
+systemctl restart monit.service
+
 # Enable LOMS
-update-rc.d skgb-intern.sh defaults
-#/etc/init.d/skgb-intern.sh start
+#update-rc.d skgb-intern.sh defaults
 setup_copy /etc/cron.d/skgb-intern R
 
 # shutdown -r now

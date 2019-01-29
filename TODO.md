@@ -1,5 +1,7 @@
-- startup script skgb-intern: funktioniert nicht zuverlässig, weil neo4j nicht sofort startet
--> monit machen lassen
+- SKGB-intern wird jetzt mit Monit gestartet, was an sich gut
+  funktioniert. Allerdings ist das alte Init-Skript in dieser Form
+  wohl nicht mehr nötig. Wir sollten es ersetzen durch ein besseres
+  Monit-Service-File.
 
 - ssl-zertifikat mit ins backup, um expiration-Warnungen zu vermeiden.
 
