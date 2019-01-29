@@ -490,8 +490,10 @@ setup_wordpress () {
   
   # these git commands have some filesystem permission issue when run as user aj...
   git -C "$1/wp-content/plugins" clone https://github.com/skgb/wordpress-plugin.git skgb-web
-  sudo -u www-data -- wp "--path=$1" plugin install https://littoral.michelf.ca/code/php-markdown/php-markdown-extra-1.2.8.zip --activate
   sudo -u www-data -- wp "--path=$1" plugin install https://github.com/johannessen/bhcalendarchives/archive/master.zip --activate
+  sudo -u www-data -- wp "--path=$1" plugin install https://littoral.michelf.ca/code/php-markdown/php-markdown-extra-1.2.8.zip --activate
+  sudo -u www-data -- wp "--path=$1" plugin install parsedown-wp
+  sudo -u www-data -- wp "--path=$1" plugin install classic-editor --activate
   sudo -u www-data -- wp "--path=$1" plugin install remove-generator-tag-for-wordpress
   sudo -u www-data -- wp "--path=$1" plugin install pjw-page-excerpt
   sudo -u www-data -- wp "--path=$1" plugin install wp-db-backup
@@ -508,6 +510,7 @@ cd /srv
 
 echo "Installing Wordpress into /srv/www ..."
 tar -xf "$BACKUPSRVPATH" www/XML www/uploads
+chown -R www-data:www-data /srv/www/uploads
 setup_wordpress www
 
 echo "Installing Wordpress into /srv/dev ..."

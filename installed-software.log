@@ -30,6 +30,8 @@ perl						install
 libapache2-mod-perl2		install
 php							install
 php7.0-curl					install
+php-dom						install
+php-mbstring				install
 php-mysql					install
 postfix						install
 postfix-mysql				install

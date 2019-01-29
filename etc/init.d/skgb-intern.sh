@@ -20,9 +20,9 @@ fi
 export PERLBREW_ROOT=/opt/perlbrew
 export PERLBREW_HOME=/tmp/.perlbrew
 . ${PERLBREW_ROOT}/etc/bashrc
-#perlbrew use perl-stable
-perlbrew use perl-5.24.0
+perlbrew use perl-5.28.1
 #which perl
+perlbrew use
 HYPNOTOAD=`which hypnotoad`
 
 LOMS_DIR="/srv/intern"

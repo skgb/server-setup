@@ -42,3 +42,14 @@
 - Ulf: backports sind nicht schlimm, kein grund schnell zu wechseln, gerne paar monate warten, oder auch länger
 
 - Git-Repo: könnte bei Bedarf via <https://gogs.io/> zugänglich gemacht werden
+
+- Service script `skgb-intern.sh` braucht hart gecodete Perl-Version.
+  Um dies zu umgehen, die fuer SKGB-intern zu verwendende Perl-Version
+  in eine eigene Datei schreiben (z. B. `/opt/perlbrew/skgb-intern`)
+  und dann diese Datei als Quelle sowohl in `setup.sh` als auch in
+  `skgb-intern.sh` verwenden. Es waere dann auch moeglich, die
+  Perl-Installation aus `setup.sh` in ein eigenes Skript auszulagern,
+  um so Updates machen zu koennen. Bis dahin koennte als Workaround
+  evtl. `/root/.perlbrew/init` von `skgb-intern.sh` eingelesen werden.
+  (Langfristig sollte evtl. auch `root` nicht dasselbe Perl nutzen wie
+  SKGB-intern...?)
