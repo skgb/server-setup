@@ -154,6 +154,7 @@ tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/regeln/src-copy
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/lib
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/lib/Mojolicious/Plugin/ReverseProxy.pm
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" legacy
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" Lib
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" git
 
 

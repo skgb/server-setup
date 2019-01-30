@@ -587,6 +587,7 @@ tar -xf "$BACKUPSRVPATH" intern/public/lib
 # see https://github.com/oetiker/mojolicious-plugin-reverseproxy/issues/5
 tar -xvf "$BACKUPSRVPATH" intern/lib/Mojolicious/Plugin/ReverseProxy.pm
 
+tar -xf "$BACKUPSRVPATH" Lib
 tar -xf "$BACKUPSRVPATH" legacy
 rm "$BACKUPSRVPATH"
 
