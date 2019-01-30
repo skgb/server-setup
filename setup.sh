@@ -421,8 +421,6 @@ else
   SETUPFAIL=3
 fi
 
-setup_copy /etc/cron.daily/letsencrypt-skgb X
-
 
 
 ### Apache
