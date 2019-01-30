@@ -9,6 +9,11 @@ if (whoami | grep -qv '^root$') ; then
 	echo "Execute as root!"
 	exit 1
 fi
+if [ -z "$NEO4J_PASSWORD" ] ; then
+	echo "Usage: `basename $0` $BACKUPFILE -y"
+	echo "Provide \$NEO4J_PASSWORD in the environment!"
+	exit 1
+fi
 if [[ $# -lt 2 || $# -gt 2 || ("$2" != "-y") ]] ; then
 	echo "Usage: `basename $0` $BACKUPFILE -y"
 	exit 1
@@ -100,9 +105,16 @@ mv Data /srv
 
 
 
+echo "Importing Let's Encrypt accounts and certificates..."
+
 mkdir -p /etc/letsencrypt/accounts
 chmod 700 /etc/letsencrypt/accounts
-mv le-accounts/* /etc/letsencrypt/accounts
+for a in le-accounts/* ; do
+	ACME_API=/etc/letsencrypt/accounts/`basename "$a"`
+	echo "$ACME_API"
+	rm -Rf "$ACME_API"
+	mv -v "$a" "$ACME_API"
+done
 mkdir -p /etc/letsencrypt/archive/skgb.de
 chmod 700 /etc/letsencrypt/archive
 mv le-archive/* /etc/letsencrypt/archive/skgb.de
@@ -112,6 +124,7 @@ mv le-renewal/skgb.de.conf /etc/letsencrypt/renewal
 if [ -f /etc/letsencrypt/live/skgb.de/cert.pem ] ; then
 	echo "Let's Encrypt 'live' links already exist; skipped."
 	echo "You must manually verify that these links point to the correct certificates!"
+	ls -l /etc/letsencrypt/live/skgb.de/*.pem | cut -d' ' -f9-
 elif LE_MAX=`perl -e '$a=0;for(split/\s+/,\`ls /etc/letsencrypt/archive/skgb.de\`){/^[a-z]+(\d+)\.pem$/;$b=$1||0;$a=$b if$b>$a}exit 1 if!$a;print$a;'` ; then
 	mkdir -p /etc/letsencrypt/live/skgb.de
 	chmod 700 /etc/letsencrypt/live

@@ -36,9 +36,9 @@ Setup des Servers
 1.	Wartung dem Vorstand ankündigen. Soweit möglich, `setup.sh` prüfen
 	und aktualisieren.
 
-1.	Lokalen Export dieses Repositories anlegen:
+2.	Lokalen Export dieses Repositories anlegen:
 	```bash
-	git clone ssh://git@clyde.skgb.de/srv/git/clyde-setup.git clydesetup
+	git clone ssh://git@solent.skgb.de/srv/git/clyde-setup.git clydesetup
 	clydesetup/prep.sh
 	
 	```
@@ -47,7 +47,7 @@ Setup des Servers
 	werden. Es ist empfehlenswert, eine lokale Arbeitskopie des Repositories
 	immer aktuell zu haben (also regelmäßig zu `pull`en).
 
-1.	Sicherstellen, dass ein aktuelles Offsite-Backup vorhanden ist und
+3.	Sicherstellen, dass ein aktuelles Offsite-Backup vorhanden ist und
 	beim Setup *schnell* zur Verfügung steht (eine lokale Kopie, die
 	über einen lahmen Telekom-ADSL-Upstream hochgeladen werden soll,
 	ist keine Lösung). Benötigt wird folgendes:
@@ -58,7 +58,7 @@ Setup des Servers
 	- `clydebackup.tar` – Backup der Datenbanken etc.
 	- `clydesrv.tar` – Backup der Server-Files von `/srv`
 
-1.	Sicherstellen, dass gerade keine Nutzer auf dem Server arbeiten.
+4.	Sicherstellen, dass gerade keine Nutzer auf dem Server arbeiten.
 	Server im Control Panel stoppen (`Steuerung` → `Erzwungen abschalten`), neues
 	Image aufspielen (`Medien` → `Images` → `Debian 9` → `Minimal` → `große
 	Partition`).
@@ -69,7 +69,7 @@ Setup des Servers
 	
 	*Dauer: ca. 4 Min.*
 
-1.	Anmelden als `root` über SSH und Passwort ändern:
+5.	Anmelden als `root` über SSH und Passwort ändern:
 	```bash
 	passwd
 	
@@ -82,7 +82,7 @@ Setup des Servers
 	
 	```
 
-1.	Export dieses Repositories in `/root/clydesetup` anlegen:
+6.	Export dieses Repositories in `/root/clydesetup` anlegen:
 	```bash
 	scp clydesetup.tar root@solent.skgb.de:
 	
@@ -93,7 +93,7 @@ Setup des Servers
 	
 	```
 	
-	Außerdem die unter 1. gelisteten weiteren Dateien nach
+	Außerdem die unter 3. gelisteten weiteren Dateien nach
 	`/root/clydesetup` kopieren:
 	```bash
 	scp credentials.private root@solent.skgb.de:clydesetup
@@ -103,7 +103,7 @@ Setup des Servers
 	
 	```
 
-1.	Anmelden als `root` über die VNC-Konsole, um die Fingerabdrücke
+7.	Anmelden als `root` über die VNC-Konsole, um die Fingerabdrücke
 	der SSH-Host-Keys ausgeben zu lassen und zu prüfen:
 	```bash
 	cd clydesetup
@@ -113,34 +113,36 @@ Setup des Servers
 	
 	Ansonsten wird die VNC-Konsole nicht benötigt.
 
-1.	Über SSH das Setup-Skript ausführen:
+8.	Über SSH das Setup-Skript ausführen:
 	```bash
 	/root/clydesetup/setup.sh 2>&1 | tee setup.log.txt
 	
 	```
 	
-	Dieser Schritt nimmt viel Zeit in Anspruch (rund 35 Min.). Nach etwa
+	Dieser Schritt nimmt viel Zeit in Anspruch (rund 20 Min.). Nach etwa
 	4 Min. sollte jedoch bis auf Perl alles erledigt sein, so dass alle
-	Haupt-Dienste des Servers (www, Mail, DNS) theoretisch schon
+	Haupt-Dienste des Servers (www, Mail, ggf. DNS) theoretisch schon
 	weitgehend laufen sollten.
 	
 	Das Skript erwartet nur wenige Nutzerinteraktionen:
 	- Passphrase des Backup-Schlüssels eingeben *(etwa 2 Min. nach Start)*
 
-1.	Server kalt neustarten (ausloggen, im Control Panel `Steuerung` →
+9.	Server kalt neustarten (ausloggen, im Control Panel `Steuerung` →
 	`Erzwungen abschalten` + `Starten`). Der kalte Neustart wird [angeblich](http://www.netcup-wiki.de/wiki/Zus%C3%A4tzliche_IP_Adresse_konfigurieren#IPv6)
 	benötigt, um sicherzustellen, dass IPv6 funktioniert.
 
-1.	Fertig.
+10.	Fertig.
 	
-	Keine Fehler aufgetreten? Puuh … dann jetzt Server neu starten
-	und **gründlich testen!**
+	Keine Fehler aufgetreten? Puuh … dann nach Server-Neustart
+	**gründlich testen!**
 	
 	Nach der Neuinstallation ist das Wordpress erst mal im Wartungsmodus.
 	Um den zu beenden, einfach in `/srv/www/htaccess_www.conf` die 503er
 	Redirects auskommentieren.
 	
 	SKGB-intern sollte ab jetzt automatisch starten.
+
+11. Aufräumen nach Bedarf, z. B. `root/clydesetup` löschen.
 
 
 

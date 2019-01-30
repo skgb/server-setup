@@ -202,7 +202,7 @@ apt-get -y install neo4j
 setup_copy /etc/security/limits.d/neo4j R
 service neo4j stop
 # see <http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases>
-(cd /var/lib/neo4j/plugins ; wget http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.5.0.1/apoc-3.5.0.1-all.jar)
+(cd /var/lib/neo4j/plugins ; wget -nv http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.5.0.1/apoc-3.5.0.1-all.jar)
 setup_patch /etc/neo4j/neo4j.conf
 service neo4j start
 systemctl enable neo4j.service
@@ -621,7 +621,7 @@ setup_copy /etc/network/interfaces.d/ip6 R
 # The CommonMark libcmark API isn't quite finalised and thus not
 # available through dpkg as of this time (ETA Debian 10). We have to
 # build it ourselves for now.
-apt-get -y install build-essential cmake
+DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential cmake
 mkdir -p /opt/cmark
 cd /opt/cmark
 curl -LO https://github.com/commonmark/cmark/archive/0.28.3.tar.gz

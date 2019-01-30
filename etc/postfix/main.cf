@@ -108,7 +108,6 @@ disable_vrfy_command = yes
 # do not list own hostname here - handled by aliases instead!
 virtual_alias_domains =
 	skgb.de
-	www.skgb.de
 	intern.skgb.de
 virtual_alias_expansion_limit = 250
 virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/skgb-virtual.cf

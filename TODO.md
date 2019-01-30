@@ -3,21 +3,13 @@
   wohl nicht mehr nötig. Wir sollten es ersetzen durch ein besseres
   Monit-Service-File.
 
-- ssl-zertifikat mit ins backup, um expiration-Warnungen zu vermeiden.
-
-- backups des providers?
--> ideal, um *schnell* wieder an den start zu gehen: automatische tägliche snapshots zusätzlich, als havarieschutz
-
 * offsite backups
 
 * Backups reparieren (neuer Schlüssel)
 
 - firewall: eigentlich nicht noetig (würde nicht schaden, aber...)
 
-- port 3000 sperren -> kann Mojo statt auf 0.0.0.0 auf 127.0.0.1 gebunden werden?
-<https://www.google.de/search?q=bind+mojolicious+to+ip>
-
-- joe: /etc/joe/joerc
+- apply <https://stribika.github.io/2015/01/04/secure-secure-shell.html>
 
 - email -> möglichst extern, zb Mailbox.org als MX
 
@@ -27,8 +19,6 @@
 - monitoring
 
 - logwatch -> nein, lieber greylog
-
-- Ethernet-Treiber stellt sich immer wieder von selbst auf "virtio", aber "e1000" ist "empfohlen". Warum und wieso? (Anscheinend war virtio früher empfohlen.)
 
 - Prüfen, ob das im README beschriebene Verfahren so geändert werden kann, dass die aktuelle Version von setup.sh direkt aus dem Repository gelesen wird statt manuell mit `prep.sh` erzeugt werden zu müssen.
 
@@ -55,3 +45,12 @@
   evtl. `/root/.perlbrew/init` von `skgb-intern.sh` eingelesen werden.
   (Langfristig sollte evtl. auch `root` nicht dasselbe Perl nutzen wie
   SKGB-intern...?)
+
+- Das Reverse-Proxy-Setup für SKGB-intern erzeugt komische 502-Fehler,
+  wenn innerhalb von Mojolicious bestimmte Fehler auftreten. Beispiel:
+  in `neo4j.get_persons` Aufruf von `$c->neo4j->run_graph` ändern in
+  `$c->run_graph` (was nicht existiert). An dieser konkreten Stelle
+  wird der Fehler nur über HTTPS getriggert, weil man dazu eingeloggt
+  sein muss. Baut man dagegen den Aufruf einer nicht existierenden
+  Methode in `execute_memory` ein, kommt die erwartete individuelle
+  500er Seite. Sieht irgendwie nach einem Problem in Mojolicious aus...
