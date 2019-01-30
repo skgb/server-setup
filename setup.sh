@@ -576,7 +576,6 @@ apachectl start
 # Install SKGB-intern
 
 setup_copy /etc/init.d/skgb-intern.sh X
-systemctl disable skgb-intern.service
 
 echo "Installing SKGB-intern into /srv/intern and /srv/legacy ..."
 sudo -u aj -- git clone https://github.com/skgb/intern.git
@@ -738,12 +737,12 @@ echo
 ### Monit
 setup_patch /etc/monit/monitrc
 setup_copy /etc/monit/conf.d/monit-http 0600
-setup_copy /etc/monit/conf-enabled/neo4j 0600
-setup_copy /etc/monit/conf-enabled/skgb-intern 0600
+setup_copy /etc/monit/conf-available/neo4j 0600
+setup_copy /etc/monit/conf-available/skgb-intern 0600
 ln -s ../conf-available/apache2 /etc/monit/conf-enabled/apache2
 ln -s ../conf-available/cron /etc/monit/conf-enabled/cron
 ln -s ../conf-available/mysql /etc/monit/conf-enabled/mysql
-ln -s ../conf-available/mysql /etc/monit/conf-enabled/neo4j
+ln -s ../conf-available/neo4j /etc/monit/conf-enabled/neo4j
 ln -s ../conf-available/postfix /etc/monit/conf-enabled/postfix
 ln -s ../conf-available/rsyslog /etc/monit/conf-enabled/rsyslog
 ln -s ../conf-available/skgb-intern /etc/monit/conf-enabled/skgb-intern
