@@ -1,0 +1,23 @@
+# on SKGB server, as the user running the backup (root?):
+ssh-keygen -o -t ed25519 -f /root/.ssh/id_ed25519_backup -P ''
+
+# on offsite server, as root:
+adduser --disabled-password --gecos 'SKGB encrypted offsite backup' skgb
+mkdir -p /home/skgb/.ssh /home/skgb/backup
+scp root@solent.skgb.de:.ssh/id_ed25519_backup.pub /home/skgb/.ssh/authorized_keys
+chown -R skgb:skgb /home/skgb/.ssh /home/skgb/backup
+chmod 700 /home/skgb/.ssh /home/skgb/backup
+chmod 600 /home/skgb/.ssh/authorized_keys
+
+# (scp will probably fail due to the PermitRootLogin setting in /etc/ssh/sshd_config)
+
+
+# clyde.skgb.de ECDSA host key fingerprint is:
+# SHA256:k7Bzu4648fRs0BEHG0i6T3IX9/CMcauNllGJizCD7wE
+
+# pentland.johannessen.de ECDSA host key fingerprint is:
+# SHA256:BLirb55p2EDdlfjstl3uyJUYnmuEyAFIFEZ7BBy5JrQ
+
+# cat.johannessen.de ECDSA host key fingerprint is:
+# SHA256:oadf5gPtv8jS0qL23B8AuBKucMhKJaRAqHYUJyo9Shg
+

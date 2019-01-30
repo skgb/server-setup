@@ -142,7 +142,9 @@ Setup des Servers
 	
 	SKGB-intern sollte ab jetzt automatisch starten.
 
-11. Aufräumen nach Bedarf, z. B. `root/clydesetup` löschen.
+11. Offsite-Backups einrichten, siehe `one-time-setup/offsite-backup.txt`.
+
+12. Aufräumen nach Bedarf, z. B. `root/clydesetup` löschen.
 
 
 

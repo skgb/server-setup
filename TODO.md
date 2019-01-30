@@ -3,7 +3,8 @@
   wohl nicht mehr nötig. Wir sollten es ersetzen durch ein besseres
   Monit-Service-File.
 
-* offsite backups
+- Die Offsite-Backups übertragen täglich *alle* Daten, rund 2 GB.
+  Das ließe sich sicher mit `rsync` erheblich verbessern.
 
 * Backups reparieren (neuer Schlüssel)
 
