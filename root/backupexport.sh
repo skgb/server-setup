@@ -149,6 +149,7 @@ tar_append "$BACKUPDIR/$BACKUPSRVFILE" www/uploads
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" servo
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" archiv
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/skgb-intern.production.conf
+tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/templates/content/stegdienstliste.html.ep
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/Merkblatt\ Datenschutz.pdf
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/regeln/src-copy
 tar_append "$BACKUPDIR/$BACKUPSRVFILE" intern/public/lib

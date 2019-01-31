@@ -200,6 +200,7 @@ apt-get -y install neo4j
 #apt-get install neo4j=2.3.6
 #apt-mark hold neo4j
 setup_copy /etc/security/limits.d/neo4j R
+setup_copy /root/neo4j-import.sh X
 service neo4j stop
 # see <http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases>
 (cd /var/lib/neo4j/plugins ; wget -nv http://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.5.0.1/apoc-3.5.0.1-all.jar)
@@ -578,6 +579,8 @@ setup_copy /etc/init.d/skgb-intern.sh X
 echo "Installing SKGB-intern into /srv/intern and /srv/legacy ..."
 sudo -u aj -- git clone https://github.com/skgb/intern.git
 tar -xf "$BACKUPSRVPATH" intern/skgb-intern.production.conf
+mv intern/templates/content/stegdienstliste.html.ep intern/templates/content/stegdienstliste.html.development.ep
+tar -xf "$BACKUPSRVPATH" intern/templates/content/stegdienstliste.html.ep
 tar -xf "$BACKUPSRVPATH" intern/public/Merkblatt\ Datenschutz.pdf
 tar -xf "$BACKUPSRVPATH" intern/public/regeln/src-copy
 tar -xf "$BACKUPSRVPATH" intern/public/lib
