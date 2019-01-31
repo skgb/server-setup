@@ -1,4 +1,4 @@
-Was ohnehin übers Backup wiederhergestellt wird, gehört nicht in `setup.sh`.
 Dieses Verzeichnis enthält lose Skripte und Notizen für Aufgaben, die beim
-Aufsetzen des Servers normalerweise nicht nötig sind, wie beispielsweise das
-Anfordern eines neuen SSL-Zertifikats.
+Aufsetzen des Servers normalerweise nicht nötig sind oder schlecht
+automatisiert werden können, wie beispielsweise das Anfordern eines neuen
+SSL-Zertifikats oder das Herstellen und Verteilen von Schlüsseln.

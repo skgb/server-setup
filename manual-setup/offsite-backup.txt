@@ -11,6 +11,9 @@ chmod 600 /home/skgb/.ssh/authorized_keys
 
 # (scp will probably fail due to the PermitRootLogin setting in /etc/ssh/sshd_config)
 
+# on SKGB server: test connection (and pin the host key)
+ssh -i /root/.ssh/id_ed25519_backup user@host.example /bin/true
+
 
 # clyde.skgb.de ECDSA host key fingerprint is:
 # SHA256:k7Bzu4648fRs0BEHG0i6T3IX9/CMcauNllGJizCD7wE

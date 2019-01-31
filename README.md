@@ -142,17 +142,6 @@ Setup des Servers
 	
 	SKGB-intern sollte ab jetzt automatisch starten.
 
-11. Offsite-Backups einrichten, siehe `one-time-setup/offsite-backup.txt`.
+11. Offsite-Backups einrichten, siehe `manual-setup/offsite-backup.txt`.
 
 12. Aufräumen nach Bedarf, z. B. `root/clydesetup` löschen.
-
-
-
-Troubleshooting
-===============
-
-Wenn unerwartete Probleme auftreten, dann gerne beim Bauen von Perl.
-Dies ist absichtlich einer der letzten Schritte in `setup.sh`, damit nun
-ohne allzu große Schwierigkeiten die noch fehlenden Schritte manuell aus
-dem Quellcode von `setup.sh` einzeln in der Shell ausgeführt und debuggt
-werden können.

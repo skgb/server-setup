@@ -63,11 +63,11 @@ mynetworks =
 	85.235.65.80/32
 	[2a03:4000:32:15d::1]/128
 # Clyde:
-	188.68.50.113/32
-	[2a03:4000:6:d111::1]/128
+#	188.68.50.113/32
+#	[2a03:4000:6:d111::1]/128
 # Cat:
-	92.51.132.119/32
-	[2a01:488:66:1000:5c33:8477:0:1]/128
+#	92.51.132.119/32
+#	[2a01:488:66:1000:5c33:8477:0:1]/128
 # Kenmare (SKGB VSM @ Host Europe):
 #	176.28.33.143/32
 # Tay:
@@ -79,6 +79,7 @@ smtpd_helo_required = yes
 smtpd_helo_restrictions = 
 	reject_invalid_helo_hostname
 	reject_non_fqdn_helo_hostname
+#strict_rfc821_envelopes = yes
 smtpd_sender_restrictions = 
 	reject_non_fqdn_sender
 	reject_unknown_sender_domain
@@ -105,20 +106,24 @@ address_verify_sender = double-bounce@solent.skgb.de
 
 disable_vrfy_command = yes
 
-# do not list own hostname here - handled by aliases instead!
+# The virtual_alias_domains control whether postfix accepts responsibility for
+# an incoming message. Since the only domain we actually provide mail services
+# for is skgb.de, mail to other domains listed here will simply result in
+# immediate "550 5.1.1" type errors, which is fine. Omitting other domains
+# from this list will instead produce "454 4.7.1" type errors that are not
+# immediate. Either way is acceptable.
+# It's important that our own FQDN not be listed here because mail addressed
+# to the FQDN should be resolved using the real /etc/aliases instead of the
+# virtual alias table.
 virtual_alias_domains =
 	skgb.de
-	intern.skgb.de
+#	intern.skgb.de
+#	www.skgb.de
 virtual_alias_expansion_limit = 250
 virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/skgb-virtual.cf
 
 # 7 MiB attachments.
 message_size_limit = 10240000
-
-# Bounce/defer immediately instead of trying next MX.
-# (primarily concerns outgoing mail, hence we'd like error messages early)
-# Caution: may contradict RFC 2821.
-smtp_skip_5xx_greeting = no
 
 # The best settings are probably inet_protocols = all and smtp_address_preference = any,
 # but they would require good DNS PTR + AAAA records and a bit of thorough testing.

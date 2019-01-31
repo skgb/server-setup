@@ -6,8 +6,6 @@
 - Die Offsite-Backups übertragen täglich *alle* Daten, rund 2 GB.
   Das ließe sich sicher mit `rsync` erheblich verbessern.
 
-* Backups reparieren (neuer Schlüssel)
-
 - firewall: eigentlich nicht noetig (würde nicht schaden, aber...)
 
 - apply <https://stribika.github.io/2015/01/04/secure-secure-shell.html>
@@ -55,3 +53,7 @@
   sein muss. Baut man dagegen den Aufruf einer nicht existierenden
   Methode in `execute_memory` ein, kommt die erwartete individuelle
   500er Seite. Sieht irgendwie nach einem Problem in Mojolicious aus...
+
+- In Apache-config www: IE8/XP in HTTP-Whitelist aufnehmen (unterstützt
+  weder SNI noch Wildcard-Zertifikate, von TLS 1.3 gar nicht zu reden...)
+
