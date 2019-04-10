@@ -1,0 +1,44 @@
+; <<>> DiG 9.10.3-P4-Debian <<>> AXFR @zoidberg.inwx.net skgb.de
+; (1 server found)
+;; global options: +cmd
+skgb.de.		86400	IN	SOA	ns.inwx.de. hostmaster.inwx.de. 2019041039 10800 3600 604800 3600
+a.skgb.de.		86400	IN	CNAME	archiv.skgb.de.
+archiv.skgb.de.		28800	IN	A	85.235.65.80
+archiv.skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+d.skgb.de.		86400	IN	CNAME	dev.skgb.de.
+dev.skgb.de.		28800	IN	A	85.235.65.80
+dev.skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+i.skgb.de.		86400	IN	CNAME	intern.skgb.de.
+intern.skgb.de.		28800	IN	A	85.235.65.80
+intern.skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+intern1.skgb.de.	86400	IN	CNAME	intern.skgb.de.
+intern2.skgb.de.	86400	IN	CNAME	intern.skgb.de.
+ip4.skgb.de.		86400	IN	A	85.235.65.80
+ip6.skgb.de.		86400	IN	AAAA	2a03:4000:32:15d::5c6b
+kp8565c79hif.intern.skgb.de. 86400 IN	CNAME	intern.skgb.de.
+mail.skgb.de.		28800	IN	MX	10 mx0.webpack.hosteurope.de.
+servo.skgb.de.		28800	IN	A	85.235.65.80
+servo.skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+skgb.de.		28800	IN	A	85.235.65.80
+skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+skgb.de.		86400	IN	LOC	51 4 28.000 N 7 33 43.000 E 417.00m 500m 500m 3m
+skgb.de.		28800	IN	MX	10 solent.skgb.de.
+skgb.de.		86400	IN	NS	ns.inwx.de.
+skgb.de.		86400	IN	NS	ns2.inwx.de.
+skgb.de.		86400	IN	NS	ns3.inwx.eu.
+skgb.de.		86400	IN	NS	ns4.inwx.com.
+skgb.de.		86400	IN	NS	ns5.inwx.net.
+skgb.de.		28800	IN	TXT	"google-site-verification=N6OI3YAlMIm9gBslRstUmrYVjtdvITLYZdcMacqrwUM"
+skgb.de.		28800	IN	CAA	0 issue "letsencrypt.org"
+skgb.de.		28800	IN	CAA	0 iodef "mailto:security@skgb.de"
+solent.skgb.de.		86400	IN	A	85.235.65.80
+www.skgb.de.		28800	IN	A	85.235.65.80
+www.skgb.de.		28800	IN	AAAA	2a03:4000:32:15d::5c6b
+www1.skgb.de.		86400	IN	CNAME	www.skgb.de.
+www2.skgb.de.		86400	IN	CNAME	www.skgb.de.
+_github-challenge-skgb.www.skgb.de. 28800 IN TXT "6cd2f93d1e"
+skgb.de.		86400	IN	SOA	ns.inwx.de. hostmaster.inwx.de. 2019041039 10800 3600 604800 3600
+;; Query time: 15 msec
+;; SERVER: 185.181.104.96#53(185.181.104.96)
+;; WHEN: Wed Apr 10 15:56:35 UTC 2019
+;; XFR size: 37 records (messages 3, bytes 1150)

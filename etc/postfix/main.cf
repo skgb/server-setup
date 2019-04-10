@@ -61,7 +61,7 @@ mynetworks =
 	[::1]/128
 # Solent:
 	85.235.65.80/32
-	[2a03:4000:32:15d::1]/128
+	[2a03:4000:32:15d::5c6b]/128
 # Clyde:
 #	188.68.50.113/32
 #	[2a03:4000:6:d111::1]/128
@@ -125,8 +125,13 @@ virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/skgb-virtual.
 # 7 MiB attachments.
 message_size_limit = 10240000
 
-# The best settings are probably inet_protocols = all and smtp_address_preference = any,
-# but they would require good DNS PTR + AAAA records and a bit of thorough testing.
+# IPv6 seems to work in principle, but protection from spam or anti-spam
+# rejection is a HUGE issue both for incoming and outgoing messages.
+# Consequently, only very few of the big mail ISPs even provide IPv6 service
+# for their MX at tis time (2019). The solution seems to be to move from
+# IP-based blocking to domain-based validation (SPF etc.), which is not yet
+# particularly high on our agenda. So, for now, we should in fact keep IPv6
+# disabled for postfix and not publish an AAAA record for the MX.
 inet_protocols = ipv4
 smtp_address_preference = ipv4
 

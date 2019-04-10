@@ -57,3 +57,9 @@
 - In Apache-config www: IE8/XP in HTTP-Whitelist aufnehmen (unterstützt
   weder SNI noch Wildcard-Zertifikate, von TLS 1.3 gar nicht zu reden...)
 
+
+- SPF (+ evtl. DKIM) implementieren und Domain-Validierung für eintreffende
+  Mails aktivieren (Voraussetzung für späteres Aktivieren von IPv6 für den
+  Mailserver, denn Blacklists funktionieren nicht gut mit IPv6); siehe auch:
+  <https://sendgrid.com/blog/where-is-ipv6-in-email/>
+  <https://labs.ripe.net/Members/mirjam/sending-and-receiving-emails-over-ipv6>
