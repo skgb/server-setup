@@ -1,26 +1,32 @@
-# on SKGB server, as the user running the backup (root?):
+# on local server, as the user running the backup (root?):
 ssh-keygen -o -t ed25519 -f /root/.ssh/id_ed25519_backup -P ''
 
 # on offsite server, as root:
-adduser --disabled-password --gecos 'SKGB encrypted offsite backup' skgb
-mkdir -p /home/skgb/.ssh /home/skgb/backup
-scp root@solent.skgb.de:.ssh/id_ed25519_backup.pub /home/skgb/.ssh/authorized_keys
-chown -R skgb:skgb /home/skgb/.ssh /home/skgb/backup
-chmod 700 /home/skgb/.ssh /home/skgb/backup
-chmod 600 /home/skgb/.ssh/authorized_keys
+# (can be skipped if server is already prepared)
+USER=skgb
+LOCALHOST=solent.skgb.de
+adduser --disabled-password --gecos 'Johannessen encrypted offsite backup' $USER
+mkdir -p /home/$USER/.ssh /home/$USER/backup
+chmod 700 /home/$USER/.ssh /home/$USER/backup
+chown $USER:$USER /home/$USER/.ssh /home/$USER/backup
+scp root@$LOCALHOST:.ssh/id_ed25519_backup.pub /home/$USER/.ssh/authorized_keys
+chmod 600 /home/$USER/.ssh/authorized_keys
+chown $USER:$USER /home/$USER/.ssh/authorized_keys
 
 # (scp will probably fail due to the PermitRootLogin setting in /etc/ssh/sshd_config)
 
 # on SKGB server: test connection (and pin the host key)
-ssh -i /root/.ssh/id_ed25519_backup user@host.example /bin/true
+USER=skgb
+REMOTEHOST=galway.johannessen.de
+ssh -i /root/.ssh/id_ed25519_backup $USER@$REMOTEHOST /bin/mkdir -p backup
 
 
-# clyde.skgb.de ECDSA host key fingerprint is:
-# SHA256:k7Bzu4648fRs0BEHG0i6T3IX9/CMcauNllGJizCD7wE
+# solent.skgb.de ECDSA host key fingerprint is:
+# SHA256:euA4Sfz2A/7wdfzG2MY/Qb01AQmheSdvx1VHN/cqVOU
 
 # pentland.johannessen.de ECDSA host key fingerprint is:
 # SHA256:BLirb55p2EDdlfjstl3uyJUYnmuEyAFIFEZ7BBy5JrQ
 
-# cat.johannessen.de ECDSA host key fingerprint is:
-# SHA256:oadf5gPtv8jS0qL23B8AuBKucMhKJaRAqHYUJyo9Shg
+# galway.johannessen.de ECDSA host key fingerprint is:
+# SHA256:HWPAduUL13bDAQGyVQbQwEP8aRwiitA75yPTtj6hdWQ
 
