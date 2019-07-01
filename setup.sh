@@ -271,7 +271,7 @@ mysqladmin flush-privileges
 #DELETE FROM user WHERE user = 'root' AND password = '';
 mysql mysql --user=root <<EOF
 CREATE USER 'rootssh'@'127.0.0.1' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
-GRANT ALL PRIVILEGES ON *.* TO 'rootssh'@'127.0.0.1';
+GRANT ALL PRIVILEGES ON *.* TO 'rootssh'@'127.0.0.1' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
 #CREATE USER 'root'@'solent.skgb.de' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
