@@ -84,5 +84,3 @@
   ````
 
 - /var/lib/neo4j darf nicht world-lesbar sein - Datenschutz...
-
-- Log Rotation in /srv/Log
