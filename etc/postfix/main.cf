@@ -122,13 +122,13 @@ virtual_alias_domains =
 virtual_alias_expansion_limit = 250
 virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/skgb-virtual.cf
 
-# 7 MiB attachments.
-message_size_limit = 10240000
+# 5.5 MiB attachments.
+message_size_limit = 8000000
 
 # IPv6 seems to work in principle, but protection from spam or anti-spam
 # rejection is a HUGE issue both for incoming and outgoing messages.
 # Consequently, only very few of the big mail ISPs even provide IPv6 service
-# for their MX at tis time (2019). The solution seems to be to move from
+# for their MX at this time (2019). The solution seems to be to move from
 # IP-based blocking to domain-based validation (SPF etc.), which is not yet
 # particularly high on our agenda. So, for now, we should in fact keep IPv6
 # disabled for postfix and not publish an AAAA record for the MX.
