@@ -29,8 +29,11 @@
 <https://downloads.chef.io/chefdk>
 <https://github.com/mattstratton/sa2017-app>
 <https://sysadvent.blogspot.com/2017/12/day-2-shifting-left-securely-with-inspec.html>
+<https://en.wikipedia.org/wiki/Comparison_of_open-source_configuration_management_software>
 
 - Ulf: backports sind nicht schlimm, kein grund schnell zu wechseln, gerne paar monate warten, oder auch länger
+
+- <https://blog.fefe.de/?ts=a39129a0> erwähnen? (Backports sind akzeptabel, aber uncool)
 
 - Git-Repo: könnte bei Bedarf via <https://gogs.io/> zugänglich gemacht werden
 
@@ -57,9 +60,29 @@
 - In Apache-config www: IE8/XP in HTTP-Whitelist aufnehmen (unterstützt
   weder SNI noch Wildcard-Zertifikate, von TLS 1.3 gar nicht zu reden...)
 
+- In Apache-config TLS-Einstellungen überprüfen und modernisieren; ggf.
+  weitere veraltete Clients aufgeben und in die HTTP-Whitelist aufnehmen
+
+- Mailserver: TLS einrichten; siehe <http://www.postfix.org/TLS_README.html>
+  (bereits erledigt für `galway.johannessen.de`; Config lässt sich leicht übertragen)
 
 - SPF (+ evtl. DKIM) implementieren und Domain-Validierung für eintreffende
   Mails aktivieren (Voraussetzung für späteres Aktivieren von IPv6 für den
   Mailserver, denn Blacklists funktionieren nicht gut mit IPv6); siehe auch:
   <https://sendgrid.com/blog/where-is-ipv6-in-email/>
   <https://labs.ripe.net/Members/mirjam/sending-and-receiving-emails-over-ipv6>
+
+- DNS-setup:
+  ````
+  @ MX ip4.solent
+  ip4.solent A
+  ip6.solent AAAA
+  ip4 CNAME ip4.solent
+  ip6 CNAME ip6.solent
+  solent A
+  solent AAAA
+  ````
+
+- /var/lib/neo4j darf nicht world-lesbar sein - Datenschutz...
+
+- Log Rotation in /srv/Log

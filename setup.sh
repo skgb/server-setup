@@ -133,20 +133,28 @@ setup_copy /etc/sudoers.d/wheel 0440
 addgroup --gid 500 wheel
 addgroup --gid 501 skgb-web  # group skgb-web is probably no longer required
 
-setup_super_user () {
-  # usage: setup_super_user "loginname" "Real Name"
-  # Adds the specified user to the system with full sudo privileges.
+setup_user () {
+  # usage: setup_user "loginname" "Real Name"
+  # Adds the specified user to the system with _no_ sudo privileges.
   
-  echo "setup_super_user $1 '$2'"
+  echo "setup_user $1 '$2'"
   adduser --disabled-password --gecos "$2" "$1"
-  adduser "$1" wheel  # sudoer
-  adduser "$1" adm  # read log files
-  adduser "$1" skgb-web
   mkdir -p "/home/$1/.ssh"
   touch "/home/$1/.ssh/authorized_keys"
   chmod 700 "/home/$1/.ssh"
   chmod 644 "/home/$1/.ssh/authorized_keys"
   chown -R "$1:$1" "/home/$1/.ssh"
+}
+
+setup_super_user () {
+  # usage: setup_super_user "loginname" "Real Name"
+  # Adds the specified user to the system with full sudo privileges.
+  
+  echo -n "setup_super_user: "
+  setup_user "$1" "$2"
+  adduser "$1" wheel  # sudoer
+  adduser "$1" adm  # read log files
+  adduser "$1" skgb-web
 }
 
 setup_insecure_password () {
@@ -178,6 +186,7 @@ setup_patch /etc/ssh/sshd_config
 setup_copy /etc/motd R
 setup_copy /etc/init.d/hostname_vps X
 update-rc.d hostname_vps defaults 09
+/etc/init.d/hostname_vps
 setup_copy /etc/profile.d/motd.sh X
 
 # If dist-upgrading to sid is intended, right now would be an appropriate time to do so.
@@ -605,7 +614,7 @@ apachectl graceful
 
 ### IPv6
 setup_copy /etc/network/interfaces.d/ip6 R
-# also requires activation in SCP and a cold reboot
+# also requires activation in netcup SCP/VCP and a cold reboot
 
 
 
