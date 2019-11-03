@@ -37,6 +37,18 @@ DAEMON_ARGS="$LOMS_SCRIPT"
 
 do_start_prepare () {
 	cd "$LOMS_DIR"
+echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+echo "@   WARNUNG: SKGB-INTERN WIRD NICHT MEHR UNTERSTUETZT!   @"
+echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+echo "DU UEBERNIMMST GERADE JURISTISCHE VERANTWORTUNG!"
+echo "Der Dienst 'SKGB-intern' wurde 2019-11 deaktiviert, um auszuschliessen,"
+echo "dass dies spaeter zur Unzeit erfolgen muesste ($ 671 II BGB). Durch"
+echo "Wiederinbetriebnahme verpflichtest du dich moeglicherweise dazu, diesen"
+echo "Dienst laenger zu pflegen, als dir lieb ist. Du solltest den Dienst"
+echo "'SKGB-intern' deshalb unbedingt sehr bald mit \`stop\` wieder abschalten."
+echo "Bis dahin uebernimmst du ausserdem die Verantwortung fuer Wartung und"
+echo "Pflege von Software und Deployment!"
+echo "(SKGB-intern 2.0.0-a34 hat keine bekannten Vulnerabilitaeten.)"
 }
 
 do_start_cmd_override () {
