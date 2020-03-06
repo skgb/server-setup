@@ -122,8 +122,8 @@ virtual_alias_domains =
 virtual_alias_expansion_limit = 250
 virtual_alias_maps = hash:/etc/postfix/virtual, mysql:/etc/postfix/skgb-virtual.cf
 
-# 5.5 MiB attachments.
-message_size_limit = 8000000
+# Prevent abuse: max 4 MiB for attachments
+message_size_limit = 6000000
 
 # IPv6 seems to work in principle, but protection from spam or anti-spam
 # rejection is a HUGE issue both for incoming and outgoing messages.
