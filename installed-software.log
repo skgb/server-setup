@@ -2,6 +2,7 @@ adduser						install
 anacron						install
 apache2						install
 apt							install
+apt-transport-https
 aptitude					install
 bash						install
 bzip2						install
