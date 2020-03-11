@@ -41,6 +41,7 @@ ssh							install
 ssl-cert					install
 subversion					install
 sudo						install
+swaks
 tar							install
 unzip						install
 vim							install
