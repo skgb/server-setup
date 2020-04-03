@@ -129,7 +129,8 @@ Setup des Servers
 
 9.	Server kalt neustarten (ausloggen, im Control Panel `Steuerung` →
 	`Erzwungen abschalten` + `Starten`). Der kalte Neustart wird [angeblich](http://www.netcup-wiki.de/wiki/Zus%C3%A4tzliche_IP_Adresse_konfigurieren#IPv6)
-	benötigt, um sicherzustellen, dass IPv6 funktioniert.
+	für manche Server-Typen benötigt, um sicherzustellen, dass IPv6
+	funktioniert.
 
 10.	Fertig.
 	

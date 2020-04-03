@@ -21,7 +21,17 @@
 
 - Prüfen, ob das im README beschriebene Verfahren so geändert werden kann, dass die aktuelle Version von setup.sh direkt aus dem Repository gelesen wird statt manuell mit `prep.sh` erzeugt werden zu müssen.
 
-- brauchen wir wirklich einen root-server? wenigstens das wordpress wäre leicht runterzuziehen
+- Brauchen wir wirklich einen Root-Server? Zwar wäre wenigstens das
+  Wordpress leicht runterzuziehen, aber es ist tlws. abhängig von
+  anderen Diensten (z. B. existieren einige `<img>`- und `<a>`-Elemente
+  mit URLs von anderen, statischen SKGB-Hosts auf diesem Server).
+  Es müsste zumindest mal sichergestellt sein, dass diese Dienste
+  entweder mit umgezogen werden oder aber dass die Inhalte/Themes in
+  Wordpress entsprechend geändert werden (kaputte interne Links sind
+  *niemals* akzeptabel, egal wie alt die WP-Artikel vielleicht sind).
+  Der damit verbundene Aufwand ist überschaubar, aber wahrscheinlich
+  vorerst deutlich größer, als mit Hilfe dieses Skripts einfach den
+  Root-Server am Laufen zu halten.
 
 - nextcloud: kalender, adressbuch für mitgliedervwealtung evtl., dokuemnte live bearbeiten (collabora - braucht java) = google docs, dropbox-ersatz
 
@@ -71,6 +81,13 @@
   Mailserver, denn Blacklists funktionieren nicht gut mit IPv6); siehe auch:
   <https://sendgrid.com/blog/where-is-ipv6-in-email/>
   <https://labs.ripe.net/Members/mirjam/sending-and-receiving-emails-over-ipv6>
+
+- Mailserver: `message_size_limit` überdenken. Wenn eh in der Regel
+  alles über die Privatadressen des Vorstands läuft, dann brauchen
+  wir hier auch kein großes Limit mehr, sondern gut 1 MiB reichen
+  tatsächlich aus; bleiben hingegen die @skgb.de-Adressen als
+  Hauptkommunikation erhalten, dann sollten ausnahmsweise Anhänge
+  bis 2-4 MiB möglich sein. (Base64-Faktor nicht vergessen.)
 
 - DNS-setup:
   ````
