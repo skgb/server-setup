@@ -2,7 +2,7 @@
 
 
 REMOTE_USER=skgb
-REMOTE_HOST=cat.johannessen.de
+REMOTE_HOST=galway.johannessen.de
 
 BANDWIDTH=200000  # kbit/s
 
