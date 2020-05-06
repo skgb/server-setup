@@ -1,0 +1,27 @@
+# basic tools that are typically available by default
+dpkg
+wget
+
+
+# basic tools that may not be available by default
+
+
+# miscellaneous tools or user software
+dnsutils
+joe
+lshw
+swaks
+
+
+# miscellaneous server or management software
+
+
+# MTA
+postfix-mysql
+
+
+# Apache (Wordpress etc.)
+
+
+# Let's Encrypt
+#ssl-cert

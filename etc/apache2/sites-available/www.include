@@ -1,0 +1,30 @@
+# Common configuration for www.skgb.de
+
+
+ServerName www.skgb.de
+
+DocumentRoot /srv/www
+<Directory /srv/www>
+	Options MultiViews IncludesNOEXEC SymLinksIfOwnerMatch
+	AllowOverride All
+	Require all granted
+	
+	FileETag All
+	<IfModule mod_deflate.c>
+		AddOutputFilterByType DEFLATE text/css text/javascript application/javascript application/x-javascript
+	</IfModule>
+</Directory>
+
+<Directory /srv/www/uploads>
+	<IfModule mod_expires.c>
+		ExpiresActive On
+		ExpiresDefault "access plus 1 year"
+	</IfModule>
+</Directory>
+
+ServerAdmin webmaster@skgb.de
+
+CustomLog /srv/Log/www journal
+
+
+# vim: syntax=apache ts=4 sw=4 noet

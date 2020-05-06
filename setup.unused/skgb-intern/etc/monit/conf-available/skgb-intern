@@ -1,0 +1,7 @@
+ check process skgb-intern with pidfile /run/skgb-intern2.pid
+   group skgb-intern
+   start program = "/etc/init.d/skgb-intern.sh start"
+   stop  program = "/etc/init.d/skgb-intern.sh stop"
+   if failed host localhost port 3000 with protocol http for 2 times within 3 cycles then restart
+   if 5 restarts with 5 cycles then timeout
+   depends on postfix, neo4j

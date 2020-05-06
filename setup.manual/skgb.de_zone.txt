@@ -1,0 +1,39 @@
+$ORIGIN skgb.de.
+@                28800   IN      A       85.235.65.80
+@                28800   IN      AAAA    2a03:4000:32:15d::5c6b
+@                28800   IN      CAA     0 iodef "mailto:security@skgb.de"
+@                28800   IN      CAA     0 issue "letsencrypt.org"
+@                86400   IN      LOC     51 4 28.000 N 7 33 43.000 E 417.00m 500m 500m 3m
+@                28800   IN      MX      10 ip4.solent.skgb.de.
+@                86400   IN      NS      ns.inwx.de.
+@                86400   IN      NS      ns2.inwx.de.
+@                86400   IN      NS      ns3.inwx.eu.
+@                86400   IN      NS      ns4.inwx.com.
+@                86400   IN      NS      ns5.inwx.net.
+@                86400   IN      SOA     ns.inwx.de. hostmaster.inwx.de. 2020050200 10800 3600 604800 3600
+@                28800   IN      TXT     "google-site-verification=N6OI3YAlMIm9gBslRstUmrYVjtdvITLYZdcMacqrwUM"
+@                28800   IN      TXT     "keybase-site-verification=Ma98MeiznD4-f0n4ZNn3GbjSONb2F5LIwrC8Nm4ea08"
+_github-challenge-skgb.www   28800 IN TXT "6cd2f93d1e"
+a                86400   IN      CNAME   archiv.skgb.de.
+archiv           28800   IN      A       85.235.65.80
+archiv           28800   IN      AAAA    2a03:4000:32:15d::5c6b
+d                86400   IN      CNAME   dev.skgb.de.
+dev              28800   IN      CNAME   solent.skgb.de.
+i                86400   IN      CNAME   intern.skgb.de.
+intern           28800   IN      CNAME   solent.skgb.de.
+intern1          86400   IN      CNAME   intern.skgb.de.
+intern2          86400   IN      CNAME   intern.skgb.de.
+ip4              86400   IN      CNAME   ip4.solent.skgb.de.
+ip4.solent       86400   IN      A       85.235.65.80
+ip6              86400   IN      CNAME   ip6.solent.skgb.de.
+ip6.solent       86400   IN      AAAA    2a03:4000:32:15d::5c6b
+kp8565c79hif.intern   86400 IN   CNAME   intern.skgb.de.
+mail             7200    IN      CNAME   wp13338326.server-he.de.
+servo            28800   IN      A       85.235.65.80
+servo            28800   IN      AAAA    2a03:4000:32:15d::5c6b
+solent           86400   IN      A       85.235.65.80
+solent           86400   IN      AAAA    2a03:4000:32:15d::5c6b
+www              28800   IN      A       85.235.65.80
+www              28800   IN      AAAA    2a03:4000:32:15d::5c6b
+www1             86400   IN      CNAME   www.skgb.de.
+www2             86400   IN      CNAME   www.skgb.de.

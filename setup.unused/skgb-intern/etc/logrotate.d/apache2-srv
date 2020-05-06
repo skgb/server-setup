@@ -1,0 +1,33 @@
+/srv/Log/www /srv/Log/intern /srv/Log/legacy {
+	weekly
+	missingok
+	rotate 8
+	compress
+	delaycompress
+	notifempty
+	create 640 root wheel
+	
+	sharedscripts
+	postrotate
+		if /etc/init.d/apache2 status > /dev/null ; then \
+			/etc/init.d/apache2 reload > /dev/null; \
+		fi;
+	endscript
+}
+
+/srv/Log/archiv /srv/Log/cron {
+	monthly
+	missingok
+	rotate 2
+	compress
+	delaycompress
+	notifempty
+	create 640 root wheel
+	
+	sharedscripts
+	postrotate
+		if /etc/init.d/apache2 status > /dev/null ; then \
+			/etc/init.d/apache2 reload > /dev/null; \
+		fi;
+	endscript
+}

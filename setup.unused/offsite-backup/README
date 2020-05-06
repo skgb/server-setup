@@ -1,0 +1,40 @@
+Reciprocal Backup Arrangement
+
+
+The hosts
+
+    solent.skgb.de
+
+and
+
+    galway.johannessen.de
+
+copy their encrypted backups to each other. Caveats:
+
+- Both hosts are located at the same ISP (albeit with different
+  product lines). When considering redundancy, this arrangement is far
+  from ideal; however, it also makes configuration significantly
+  easier. Additionally, it is believed that severe data losses are
+  sufficiently rare that this arrangement offers enough safety for us
+  for the time being.
+
+- The encryption is to specific PGP keys. Decryption requires having
+  both the private key and its passphrase at hand. The passphrase is
+  currently not stored on the servers itself.
+
+- The encryption is partial only: Databases and confidential server
+  config files (such as passwords and SSL keys) are encrypted, regular
+  data files (such as those available on the SKGB-intern service) are
+  not.
+
+- The encryption may or may not be evident from the backup file name.
+  This is dependant upon the details of the backup export script,
+  which is subject to change.
+
+
+Responsible Person for this arrangement is:
+Arne Johannessen, ajnn.de
+***REMOVED***
+phone +49 2264 4194994
+fax   +49 2264 4194995
+

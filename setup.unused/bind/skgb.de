@@ -1,0 +1,59 @@
+;
+; The full zone file
+; $Id: skgb.de $
+;
+$ORIGIN skgb.de.
+
+; default expiration time for RRs without their own TTL value
+$TTL 4h
+
+@	2h	IN	SOA	clyde.skgb.de. hostmaster.skgb.de. (
+				2017091300	; serial number for this zone
+				2h		; slave refresh
+				30m		; slave retry
+				2w		; slave expire
+				20m )		; minimum TTL for failed lookups
+
+@	2h	NS	clyde.skgb.de.
+	2h	NS	ns.inwx.de.
+	2h	NS	c.ns.buddyns.com.
+
+clyde	1d	A	188.68.50.113
+@	30m	MX	10 cat.johannessen.de.
+
+; SKGB-Web
+www		A	188.68.50.113
+www1		CNAME	www
+www2		CNAME	www
+@		A	188.68.50.113
+		TXT	"google-site-verification=N6OI3YAlMIm9gBslRstUmrYVjtdvITLYZdcMacqrwUM"
+
+; SKGB-Web Archiv
+archiv		A	188.68.50.113
+a		CNAME	archiv
+
+; SKGB-intern
+intern	5m	A	188.68.50.113
+intern1		A	92.51.132.119
+intern2		A	188.68.50.113
+i		CNAME	intern
+kp8565c79hif.intern		A	188.68.50.113
+
+; misc
+servo		A	188.68.50.113
+ip6		AAAA	2a03:4000:6:d111::1
+;server-g4	CNAME	tokotah.homeip.net.
+@		LOC	51 4 28 N 7 33 43 E 417m 500m 500m 3m
+@		TXT	keybase-site-verification=Ma98MeiznD4-f0n4ZNn3GbjSONb2F5LIwrC8Nm4ea08
+cloud		A	188.68.50.113
+office		A	188.68.50.113
+
+; Host Europe VSM
+mail		A	92.51.132.119
+;imap		CNAME	vwp8467.webpack.hosteurope.de.
+;d		CNAME	dev
+;dev		A	176.28.33.143
+;vsm.he		CNAME	wp10959533.vwp8467.webpack.hosteurope.de.
+;he		CNAME	vwp8467.webpack.hosteurope.de.
+
+zone-complete		TXT yes

@@ -1,0 +1,7 @@
+ check process neo4j matching "\bjava\b.*\bneo4j\b" every 2 cycles
+   group skgb-intern
+   group neo4j
+   start program = "/bin/bash -c '/usr/sbin/service neo4j start ; sleep 20'"
+   stop  program = "/usr/sbin/service neo4j stop"
+   if failed host localhost port 7474 with protocol http for 4 times within 5 cycles then restart
+   if 5 restarts with 5 cycles then timeout

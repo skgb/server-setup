@@ -1,0 +1,3 @@
+[submodule "setup.global"]
+	path = setup.global
+	url = git@github.com:johannessen/setup.sh.git

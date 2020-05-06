@@ -1,0 +1,6 @@
+# /etc/cron.d/skgb-intern: run scheduled services on SKGB-intern
+#
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/6 * * * * root cd /srv/intern && /opt/perlbrew/bin/perlbrew --root /opt/perlbrew exec script/skgb_intern.pl cron -m production >> /srv/Log/cron

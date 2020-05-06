@@ -1,0 +1,22 @@
+gpg2 --s2k-digest-algo SHA384 --s2k-mode 3 --s2k-count 64000000 --s2k-cipher-algo CAMELLIA256 --gen-key
+
+# Real name: SKGB Automated Backups
+# Email address: auto-backups@skgb.de.invalid
+
+
+gpg2 --default-cert-level 3 --edit-key 260EC33C
+> expire
+
+# Key is valid for? 8y
+
+> key 1
+> expire
+
+# Key is valid for? 8y
+
+> setpref SHA384 SHA512 RIPEMD160 SHA256 SHA224 SHA1 CAMELLIA256 AES256 TWOFISH CAMELLIA192 AES192 AES BLOWFISH CAMELLIA128 CAST5 IDEA 3DES ZLIB ZIP BZIP2 Uncompressed
+> save
+
+
+gpg2 --export -a 260EC33C > 260EC33C-sec.asc
+gpg2 --export-secret-key -a 260EC33C >> 260EC33C-sec.asc

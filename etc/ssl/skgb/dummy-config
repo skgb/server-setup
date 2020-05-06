@@ -1,0 +1,49 @@
+# Create a self-signed SSL certificate first before contacting Let's Encrypt
+# so that Apache won't complain about having no certificate.
+
+[req]
+default_bits        = 2048
+default_keyfile     = /etc/ssl/skgb/dummy-key.pem
+#default_certfile    = /etc/ssl/skgb/dummy-cert.pem
+distinguished_name  = subject
+x509_extensions     = x509_ext
+string_mask         = utf8only
+prompt              = no
+
+[subject]
+countryName         = DE
+stateOrProvinceName = Nordrhein-Westfalen
+localityName        = Marienheide
+organizationName    = Segel- und Kanugemeinschaft Brucher Talsperre e. V.
+# Use a friendly name here because its presented to the user. The server's DNS
+#   names are placed in Subject Alternate Names. Plus, DNS names here is deprecated
+#   by both IETF and CA/Browser Forums. If you place a DNS name here, then you 
+#   must include the DNS name in the SAN too (otherwise, Chrome and others that
+#   strictly follow the CA/Browser Baseline Requirements will fail).
+commonName          = SKGB
+emailAddress        = webmaster@skgb.de
+
+[ x509_ext ]
+
+#subjectKeyIdentifier   = hash
+#authorityKeyIdentifier = keyid,issuer
+
+# You only need digitalSignature below. *If* you don't allow
+#   RSA Key transport (i.e., you use ephemeral cipher suites), then
+#   omit keyEncipherment because that's key transport.
+basicConstraints    = CA:FALSE
+keyUsage            = digitalSignature, keyEncipherment
+subjectAltName      = @alt_names
+nsComment           = "dummy certificate"
+
+[alt_names]
+DNS.1  = skgb.de
+DNS.2  = a.skgb.de
+DNS.3  = archiv.skgb.de
+DNS.4  = d.skgb.de
+DNS.5  = dev.skgb.de
+DNS.6  = i.skgb.de
+DNS.7  = intern.skgb.de
+DNS.8  = servo.skgb.de
+DNS.9  = solent.skgb.de
+DNS.10 = www.skgb.de

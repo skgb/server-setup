@@ -1,0 +1,11 @@
+#! /bin/bash
+
+# reload /etc/aliases
+newaliases
+
+# reload /etc/postfix/virtual
+cd /etc/postfix
+postmap hash:virtual
+
+# reload main.cf
+postfix reload

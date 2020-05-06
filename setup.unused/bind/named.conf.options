@@ -1,0 +1,88 @@
+acl bogusnets {
+	// RFC1918 space is commonly used in spoofing attacks
+	0.0.0.0/8;
+	192.0.2.0/24;
+	224.0.0.0/3;
+	10.0.0.0/8;
+	172.16.0.0/12;
+	192.168.0.0/16;
+};
+acl ownnets {
+	92.51.132.119;  // Cat
+	188.68.50.113;  // Clyde
+};
+acl buddynsquery {
+	108.61.224.67;
+	173.244.206.25;  // b.ns.buddyns.com
+	173.244.206.26;  // a.transfer.buddyns.com
+	88.198.106.11;  // b.transfer.buddyns.com
+	2001:19f0:6400:8642::3;  // b.ns.buddyns.com
+	2607:f0d0:1001:d::100;
+	2a01:4f8:d12:d01::10:100;  // b.transfer.buddyns.com
+};
+acl buddynstransfer {
+	173.244.206.26;  // a.transfer.buddyns.com
+	88.198.106.11;  // b.transfer.buddyns.com
+	2607:f0d0:1001:d::100;
+	2a01:4f8:d12:d01::10:100;  // b.transfer.buddyns.com
+};
+acl inwx {
+	217.70.142.96;  // zoidberg.inwx.net
+	217.70.142.66;  // ns.inwx.de
+	213.239.206.103;  // ns2.inwx.de
+	46.165.212.97;  // ns3.inwx.eu
+	95.211.1.145;  // ns4.inwx.com
+	108.59.8.65;  // ns5.inwx.net
+	2a01:4f8:130:90e1::2;  // ns2.inwx.de
+	2a00:c98:2100:a006:3::1;  // ns3.inwx.eu
+	2001:1af8:4400:a048:1::1;  // ns4.inwx.com
+	2604:9a00:2010:a013:1::1;  // ns5.inwx.net
+};
+
+
+options {
+	directory "/var/cache/bind";
+
+	// If there is a firewall between you and nameservers you want
+	// to talk to, you may need to fix the firewall to allow multiple
+	// ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+	// If your ISP provided one or more IP addresses for stable 
+	// nameservers, you probably want to use them as forwarders.  
+	// Uncomment the following block, and insert the addresses replacing 
+	// the all-0's placeholder.
+
+	// forwarders {
+	// 	0.0.0.0;
+	// };
+	// use local cache in our ISP's master NS
+//	forwarders {
+//		46.38.225.230;  // dns-resolv1.netcup.net
+//		46.38.252.230;  // dns2.dnsserver2.de
+//	};
+
+	// support for secondary NS
+	allow-transfer {
+		# IPs der Secondary-NS, ggf. weitere hinzufuegen.
+		localhost;
+		inwx;
+		buddynstransfer;
+	};
+
+	// some security/anti-abuse provisions
+	blackhole { bogusnets; };
+//	allow-query { localhost; ownnets; inwx; buddynsquery; };
+	allow-query { any; } ;
+	allow-recursion { localhost; ownnets; };
+
+
+	//========================================================================
+	// If BIND logs error messages about the root key being expired,
+	// you will need to update your keys.  See https://www.isc.org/bind-keys
+	//========================================================================
+	dnssec-validation auto;
+
+	auth-nxdomain no;    # conform to RFC1035
+	listen-on-v6 { any; };
+};
+

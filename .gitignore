@@ -1,0 +1,9 @@
+/credentials.private
+setup.tar
+setup.log.txt
+
+backup.tar
+srv.tar
+
+/setup.unused/skgb-intern/backupkey.private
+/setup.unused/skgb-intern/credentials.private

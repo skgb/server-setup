@@ -1,0 +1,6 @@
+Parts from clydesetup formerly used to install SKGB-intern.
+No longer in use, but included here purely as documentation.
+
+Warning: This directory is definitely incomplete!
+Check the clydesetup branch for the last stable version
+(which was being used with Debian 9 stretch at the time).

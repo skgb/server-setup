@@ -1,0 +1,23 @@
+# Common configuration for dev.skgb.de
+
+
+ServerName dev.skgb.de
+
+DocumentRoot /srv/dev
+<Directory /srv/dev>
+	Require all granted
+	
+	Options MultiViews FollowSymLinks
+	AllowOverride All
+	
+	FileETag All
+</Directory>
+
+LogLevel info
+
+ServerAdmin webmaster@skgb.de
+
+#Redirect 503 /
+
+
+# vim: syntax=apache ts=4 sw=4 noet

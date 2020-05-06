@@ -1,0 +1,4 @@
+Dieses Verzeichnis enthält lose Skripte und Notizen für Aufgaben, die
+beim Aufsetzen des Servers normalerweise nicht nötig sind oder schlecht
+automatisiert werden können, wie beispielsweise das Anfordern eines
+neuen SSL-Zertifikats oder das Herstellen und Verteilen von Schlüsseln.

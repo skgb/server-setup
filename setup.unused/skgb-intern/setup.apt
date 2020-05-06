@@ -1,0 +1,33 @@
+# basic tools that are typically available by default
+dpkg
+wget
+
+
+# basic tools that may not be available by default
+apt-transport-https
+
+
+# miscellaneous tools or user software
+# dig:
+dnsutils
+joe
+lshw
+perl-doc
+swaks
+
+
+# miscellaneous server or management software
+gnupg2
+#subversion
+
+
+# MTA
+postfix-mysql
+
+
+# Apache (Wordpress etc.)
+#libapache2-mod-perl2
+
+
+# Let's Encrypt
+#ssl-cert
