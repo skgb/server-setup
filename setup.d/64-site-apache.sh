@@ -71,8 +71,10 @@ rm -f /var/www/.wp-cli/cache/core/wordpress-*.tar.gz /var/www/.wp-cli/cache/plug
 
 setup_copy "$APACHE_DIR/sites-available/www.conf" R
 setup_copy "$APACHE_DIR/sites-available/www.include" R
+setup_copy "$APACHE_DIR/sites-available/wwwdev.conf" R
 setup_copy "$APACHE_DIR/sites-available/wwwdev.include" R
 a2ensite -q www
+a2dissite -q wwwdev
 
 
 
