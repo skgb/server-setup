@@ -1,0 +1,9 @@
+--- joerc	2018-05-05 12:31:00.000000000 +0200
++++ joerc	2020-05-16 21:47:00.000000000 +0200
+@@ -39,5 +39,5 @@
+  -nocurdir	Do not prompt with current directory
+ 
+- -nobackups	If you don't want backup files to be created
++-nobackups	If you don't want backup files to be created
+ 
+  -nodeadjoe	If you don't want DEADJOE files to be created
