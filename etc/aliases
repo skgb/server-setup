@@ -16,4 +16,3 @@ double-bounce: /dev/null
 noreply: /dev/null
 
 root: uk, aj
-monit: root
