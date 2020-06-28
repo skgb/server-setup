@@ -20,9 +20,6 @@ TODO (SKGB-Server)
   Hauptkommunikation erhalten, dann sollten ausnahmsweise Anhänge
   bis 2-4 MiB möglich sein. (Base64-Faktor nicht vergessen.)
 
-- Mailserver: TLS einrichten; siehe <http://www.postfix.org/TLS_README.html>
-  (bereits erledigt für `galway.johannessen.de`; Config lässt sich leicht übertragen)
-
 - SPF (+ evtl. DKIM) implementieren und Domain-Validierung für eintreffende
   Mails aktivieren (Voraussetzung für späteres Aktivieren von IPv6 für den
   Mailserver, denn Blacklists funktionieren nicht gut mit IPv6); siehe auch:

@@ -21,9 +21,9 @@ readme_directory = no
 compatibility_level = 2
 
 # TLS parameters
-smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
-smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
-smtpd_use_tls=yes
+#smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+#smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+#smtpd_use_tls=yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
@@ -134,6 +134,19 @@ message_size_limit = 6000000
 # disabled for postfix and not publish an AAAA record for the MX.
 inet_protocols = ipv4
 smtp_address_preference = ipv4
+
+# TLS incoming
+smtpd_tls_key_file = /etc/ssl/skgb/privkey.pem
+smtpd_tls_cert_file = /etc/ssl/skgb/fullchain.pem
+smtpd_tls_security_level = may
+smtpd_tls_received_header = yes
+smtpd_tls_loglevel = 1
+
+# TLS outgoing
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+smtp_tls_loglevel = 1
 
 
 #######################################################################
