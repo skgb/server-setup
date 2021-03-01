@@ -43,8 +43,8 @@ setup_wordpress () {
   sudo -u www-data -- wp "--path=$1" plugin uninstall akismet || true
   sudo -u www-data -- wp "--path=$1" plugin uninstall hello-dolly || true
   sudo -u www-data -- wp "--path=$1" plugin uninstall hello || true
-  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme-4.git skgb4
-  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme-5.git skgb5
+  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme.git -b skgb4 skgb4
+  git -C "$1/wp-content/themes" clone https://github.com/skgb/wordpress-theme.git -b skgb5 skgb5
   sudo -u www-data -- wp "--path=$1" theme install twentyten
   sudo -u www-data -- wp "--path=$1" theme activate skgb5
 }
