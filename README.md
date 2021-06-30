@@ -122,6 +122,11 @@ Weiterverwendung
 Dieses Repository enthält zwar keine Passwörter o. ä., aber allerlei
 Besonderheiten für den SKGB-Server. Es ist daher nicht zur
 Weiterverwendung geeignet.
+Aus demselben Grund war dieses Repository im Zeitraum von
+September 2016 bis Juni 2021 nicht öffentlich zugänglich.
+Seit dem 1. Juli 2021 wird die enthaltene Konfiguration nicht
+mehr auf dem Vereinsserver verwendet, so dass derartige
+Schutzmaßnahmen nunmehr entbehrlich sind.
 
 [setup.sh][] wurde von Arne Johannessen geschrieben und darf ohne
 Restriktionen weiterverwendet werden.
